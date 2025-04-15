@@ -1,0 +1,1 @@
+public class Intel_Nvidia implements ComponenteFactory {
