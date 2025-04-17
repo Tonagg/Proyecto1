@@ -11,6 +11,9 @@ public class CPUIntel extends Componente implements CPU {
 
     @Override
     public String getDescripcion() {
-        return nombre + " (" + cantidadNucleos + " núcleos, " + marca + ")";
+        return nombre + "de marca:" + marca + "con " + cantidadNucleos +"nucleos"  + " PRECIO:" + precio;
+    }
+    public double getPrecio() {
+        return precio;
     }
 }

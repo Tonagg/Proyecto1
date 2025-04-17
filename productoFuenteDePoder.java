@@ -1,7 +1,7 @@
 
 
 public class productoFuenteDePoder extends Componente implements FuenteDePoder {
-    private int cantidadNucleos;
+    private int potenciaMaxima;
 
     public productoFuenteDePoder (String nombre, double precio, String marca, String tipoComponente, int potenciaMaxima) {
         // La marca se fija en 
@@ -11,6 +11,9 @@ public class productoFuenteDePoder extends Componente implements FuenteDePoder {
 
     @Override
     public String getDescripcion() {
-        return nombre + " (" + potenciaMaxima + " Tamanio de Memoria, " + marca + ")";
+        return nombre + "de marca:" + marca + "con " + potenciaMaxima +"potencia Maxima"  + " PRECIO:" + precio;
+    }
+    public double getPrecio() {
+        return precio;
     }
 }

@@ -1,22 +1,28 @@
 
 
 
-public class productoAlmacenamiento extends Componente implements Almacenamineto {
-    private int capacidadAlamacenamiento;
+public class productoAlmacenamiento extends Componente implements Almacenamiento {
+    private int capacidadAlmacenamiento;
      private String tipodeAlmacenamiento;
 
 
-    public productoRAM (String nombre, double precio, String marca, String tipoComponente, int capacidadAlamacenamiento, String tipodeAlmacenamiento) {
+    public productoAlmacenamiento (String nombre, double precio, String marca, String tipoComponente, int capacidadAlmacenamiento, String tipodeAlmacenamiento) {
         // La marca se fija en "Intel"
-        super(nombre, precio, marca, "Almacenamineto",  );
-        this.capacidadAlamacenamiento = capacidadAlamacenamiento;
+        super(nombre, precio, marca, "Almacenamineto" );
+        this.capacidadAlmacenamiento = capacidadAlmacenamiento;
         this.tipodeAlmacenamiento= tipodeAlmacenamiento;
 
 
-
+}
 
     @Override
     public String getDescripcion() {
-        return nombre + " (" + tamanioDeMemoria + " Tamanio de Memoria, " + marca + ")";
+        return nombre + " de marca: " + marca + " con " + capacidadAlmacenamiento +
+       "GB de capacidad de almacenamiento, tipo " + tipodeAlmacenamiento +
+       ". PRECIO: " + precio;
+    }
+
+    public double getPrecio() {
+        return precio;
     }
 }

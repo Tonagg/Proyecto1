@@ -1,9 +1,9 @@
 
 
-public class GPUIntel extends Componente implements GPU {
-    private int cantidadNucleos;
+public class GPUnvidia extends Componente implements GPU {
+    private String tipoDeMemoria;
 
-    public CPUIntel(String nombre, double precio, String marca, String tipoComponente, String tipoDeMemoria) {
+    public GPUnvidia(String nombre, double precio, String marca, String tipoComponente, String tipoDeMemoria) {
         // La marca se fija en "Intel"
         super(nombre, precio, "Nvidia", "GPU");
         this.tipoDeMemoria = tipoDeMemoria;
@@ -11,6 +11,10 @@ public class GPUIntel extends Componente implements GPU {
 
     @Override
     public String getDescripcion() {
-        return nombre + " (" + tipoDeMemoria + " Tipo de Memoria, " + marca + ")";
+        return nombre + "de marca:" + marca + "con " + tipoDeMemoria +"tipo de memoria"  + " PRECIO:" + precio;
+    
+    }
+    public double getPrecio() {
+        return precio;
     }
 }

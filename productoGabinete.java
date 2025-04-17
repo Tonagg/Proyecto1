@@ -13,4 +13,7 @@ public class productoGabinete extends Componente implements Gabinete {
     public String getDescripcion() {
         return nombre ;
     }
+    public double getPrecio() {
+        return precio;
+    }
 }

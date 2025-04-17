@@ -7,8 +7,8 @@ public interface ComponenteFactory {
     List<GPU> getGPUs();
     List<RAM> getRAM();
     List<Motherboard> getMotherboard();
-    List<Fuente> getFuente();
-    List<Almacenamineto> getAlmacenamiento();
+    List<FuenteDePoder> getFuente();
+    List<Almacenamiento> getAlmacenamiento();
     List<Gabinete> getGabinete();
 
    

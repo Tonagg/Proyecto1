@@ -1,9 +1,9 @@
 
 // Adapter para adaptar una GPUIntel para ser utilizada en el contexto de la fábrica AMD.
-public class AdaptadorMotherboardIntel implements GPU {
-    private GPU gpuIntel; // Instancia de GPU que se desea adaptar.
+public class AdaptadorMotherboardIntel implements Motherboard {
+    private Motherboard motherboardIntel; // Instancia de GPU que se desea adaptar.
 
-    public AdaptadorGPUIntel(Motherboard motherboardIntel) {
+    public AdaptadorMotherboardIntel(Motherboard motherboardIntel) {
         this.motherboardIntel = motherboardIntel;
     }
 

@@ -4,6 +4,7 @@ public abstract class Componente {
     protected String nombre;
     protected double precio;
     protected String marca;
+    protected String tipoComponente;
 
     public Componente(String nombre, double precio, String marca, String tipoComponente) {
         this.nombre = nombre;
@@ -25,9 +26,8 @@ public abstract class Componente {
     }
 
     public String TipoComponente(){
-        return tipoComponente
+        return tipoComponente;
     }
     
-    // Método abstracto para obtener la descripción del componente.
     public abstract String getDescripcion();
 }

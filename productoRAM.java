@@ -2,7 +2,7 @@
 
 
 public class productoRAM extends Componente implements RAM {
-    private int cantidadNucleos;
+    private int tamanioDeMemoria;
 
     public productoRAM (String nombre, double precio, String marca, String tipoComponente, int tamanioDeMemoria) {
         // La marca se fija en "Intel"
@@ -12,6 +12,16 @@ public class productoRAM extends Componente implements RAM {
 
     @Override
     public String getDescripcion() {
-        return nombre + " (" + tamanioDeMemoria + " Tamanio de Memoria, " + marca + ")";
+        return nombre + "de marca:" + marca + "con " + tamanioDeMemoria +"tamanio de memoria"  + " PRECIO:" + precio;
+    }
+
+    public getPrecio(){
+
+        return precio;
+    }
+
+    public int getTamanioDeMemoria(){
+
+        return tamanioDeMemoria;
     }
 }

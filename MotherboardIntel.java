@@ -1,8 +1,8 @@
 
 public class MotherboardIntel extends Componente implements Motherboard {
-    private int cantidadNucleos;
+    private String tipoDeChipSet;
 
-    public CPUIntel(String nombre, double precio, String marca, String tipoComponente, String tipoDeChipSet) {
+    public MotherboardIntel(String nombre, double precio, String marca, String tipoComponente, String tipoDeChipSet) {
         // La marca se fija en "Intel"
         super(nombre, precio, marca, "Motherboard");
         this.tipoDeChipSet = tipoDeChipSet;
@@ -10,6 +10,9 @@ public class MotherboardIntel extends Componente implements Motherboard {
 
     @Override
     public String getDescripcion() {
-        return nombre + " (" + tipoDeChipSet + " Tipo de chipset, " + marca + ")";
+        return nombre + "de marca:" + marca + "con " + tipoDeChipSet +"tipo de tipo de ChipSet"  + " PRECIO:" + precio;
+    }
+    public double getPrecio() {
+        return precio;
     }
 }
