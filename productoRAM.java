@@ -15,7 +15,7 @@ public class productoRAM extends Componente implements RAM {
         return nombre + "de marca:" + marca + "con " + tamanioDeMemoria +"tamanio de memoria"  + " PRECIO:" + precio;
     }
 
-    public getPrecio(){
+    public double getPrecio(){
 
         return precio;
     }

@@ -1,10 +1,11 @@
 
 
+// 2) Builder para PC Personalizada
 public class ComputadoraPersonalizadaBuilder implements ComputadoraBuilder {
-    private Computadora computadora;
+    private final Computadora computadora;
 
     public ComputadoraPersonalizadaBuilder() {
-        computadora = new Computadora();
+        this.computadora = new Computadora();
     }
 
     @Override
@@ -13,8 +14,8 @@ public class ComputadoraPersonalizadaBuilder implements ComputadoraBuilder {
     }
 
     @Override
-    public void agregarRAM(RAM modulo) {
-        computadora.agregarRAM(modulo);
+    public void agregarRAM(RAM ram) {
+        computadora.agregarRAM(ram);
     }
 
     @Override
@@ -33,13 +34,13 @@ public class ComputadoraPersonalizadaBuilder implements ComputadoraBuilder {
     }
 
     @Override
-    public void agregarMotherboard(Motherboard motherboard) {
-        computadora.setMotherboard(motherboard);
+    public void agregarMotherboard(Motherboard mb) {
+        computadora.setMotherboard(mb);
     }
 
     @Override
-    public void agregarGabinete(Gabinete gabinete) {
-        computadora.setGabinete(gabinete);
+    public void agregarGabinete(Gabinete gab) {
+        computadora.setGabinete(gab);
     }
 
     @Override
