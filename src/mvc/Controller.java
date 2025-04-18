@@ -1,54 +1,58 @@
+// src/mvc/Controller.java
 package src.mvc;
-// ComputadoraController.java
 
-import src.decorator.*;
 import src.*;
+import src.decorator.*;
+import src.Ticket;
 
 public class Controller {
-    private final Model model;
-    private final View view;
 
-    public Controller(Model model, View view) {
-        this.model = model;
-        this.view  = view;
+    private final Model model;
+    private final View  view;
+
+    public Controller(Model m, View v) {
+        this.model = m;
+        this.view  = v;
     }
 
     public void iniciar() {
-        int opcion = view.mostrarMenu();
+
+        /* -------- Selección de tipo de equipo -------- */
         Computadora pc;
-        if (opcion == 1) {
-            pc = model.crearComputadoraPersonalizada();
-        } else {
-            String modelo = view.solicitarModeloPrearmada();
-            pc = model.crearComputadoraPrearmada(modelo);
+        int op = view.mostrarMenu();
+        if (op == 1) pc = model.crearComputadoraPersonalizada();
+        else {
+            String mod = view.solicitarModeloPrearmada();
+            pc = model.crearComputadoraPrearmada(mod);
         }
 
-        // Bucle para agregar software via Decorator
-        while (view.confirmarAgregarSoftware()) {
-            int sw = view.seleccionarSoftware();
-            switch (sw) {
-                case 1:
-                    pc = new WindowsDecorator(pc);
-                    break;
-                case 2:
-                    pc = new OfficeDecorator(pc);
-                    break;
-                case 3:
-                    pc = new PhotoshopDecorator(pc);
-                    break;
-                case 4:
-                    pc = new WSLDecorator(pc);  // asumiendo que ya tienes este decorador
-                    break;
-                case 0:
-                    // sale del bucle
-                    sw = 0;
-                    break;
-                default:
-                    System.out.println("Opción no válida.");
+        /* -------- Compatibilidad -------- */
+        if (!model.esCompatible()) {
+            view.mostrarMensaje("¡Incompatibilidad detectada!");
+            if (view.confirmarForzarCompat()) {
+                String notas = model.adaptar();
+                view.mostrarMensaje(notas);
+            } else {
+                view.mostrarMensaje("Compra cancelada.");
+                return;
             }
-            if (sw == 0) break;
         }
 
-        view.mostrarComputadora(pc);
+        /* -------- Agregar software (Decorators) ------ */
+        while (view.confirmarAgregarSoftware()) {
+            switch (view.seleccionarSoftware()) {
+                case 1 -> pc = new WindowsDecorator(pc);
+                case 2 -> pc = new OfficeDecorator(pc);
+                case 3 -> pc = new PhotoshopDecorator(pc);
+                case 4 -> pc = new WSLDecorator(pc);
+                case 0 -> { /* salir */ }
+                default -> view.mostrarMensaje("Opción inválida.");
+            }
+            view.mostrarPcParcial(pc);
+        }
+
+        /* -------- Ticket final -------- */
+        Ticket ticket = model.generarTicket(""); // aquí puedes pasar notas extra si guardaste
+        view.mostrarTicket(ticket);
     }
 }

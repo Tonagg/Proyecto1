@@ -1,5 +1,14 @@
+package src;
 import java.util.ArrayList;
 import java.util.List;
+
+import src.factory.Almacenamiento;
+import src.factory.CPU;
+import src.factory.FuenteDePoder;
+import src.factory.GPU;
+import src.factory.Gabinete;
+import src.factory.Motherboard;
+import src.factory.RAM;
 
 public class Computadora {
     private CPU cpu;
