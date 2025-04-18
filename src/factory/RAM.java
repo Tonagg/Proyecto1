@@ -1,0 +1,7 @@
+package src.factory;
+public interface RAM {
+
+    String getDescripcion();
+    double getPrecio();
+    int getTamanioDeMemoria();
+}
