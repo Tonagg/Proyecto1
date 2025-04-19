@@ -1,5 +1,6 @@
 package src.mvc;
 
+import java.util.List;
 import java.util.Scanner;
 import src.Ticket;
 import src.Computadora;
@@ -52,8 +53,45 @@ public class View {
         return sc.nextInt();
     }
 
-    /* ---------------- Mensajes / Salida -------------- */
+    /* ---------------- Selección genérica de catálogo ---------------- */
+    /**
+     * Muestra un catálogo numerado y lee la opción elegida.
+     *
+     * @param <T>       Tipo de los elementos del catálogo (CPU, GPU, RAM, etc.)
+     * @param nombre    Nombre del tipo de elementos (p.ej. "CPU", "GPU", "RAM", ...)
+     * @param opciones  Lista de opciones a mostrar
+     * @return índice (1–opciones.size()) de la opción elegida
+     */
+    public <T> int seleccionarDeCatalogo(String nombre, List<T> opciones) {
+        System.out.println("Seleccione " + nombre + ":");
+        for (int i = 0; i < opciones.size(); i++) {
+            System.out.printf("  %2d) %s%n", i + 1, opciones.get(i).toString());
+        }
+        int idx;
+        do {
+            System.out.printf("Opción (1–%d): ", opciones.size());
+            idx = sc.nextInt();
+        } while (idx < 1 || idx > opciones.size());
+        return idx;
+    }
 
+    /**
+     * Pide al usuario cuántas unidades de un recurso desea (p.ej. módulos de RAM o discos),
+     * con un mínimo de 1 y un máximo especificado.
+     *
+     * @param nombre  Nombre de lo que se está preguntando ("módulos de RAM", "discos", ...)
+     * @param max     Cantidad máxima permitida
+     * @return número entre 1 y max
+     */
+    public int solicitarCantidad(String nombre, int max) {
+        System.out.printf("¿Cuántos %s desea? (1–%d): ", nombre, max);
+        int n = sc.nextInt();
+        if (n < 1) n = 1;
+        if (n > max) n = max;
+        return n;
+    }
+
+    /* ---------------- Mensajes / Salida -------------- */
     public void mostrarMensaje(String msg) {
         System.out.println(msg);
     }
@@ -65,6 +103,6 @@ public class View {
     public void mostrarPcParcial(Computadora pc) {
         System.out.println("--- Config actual ---");
         System.out.println(pc.getDescripcion());
-        System.out.printf("Subtotal: $%.2f\n", pc.calcularPrecioTotal());
+        System.out.printf("Subtotal: $%.2f%n", pc.calcularPrecioTotal());
     }
 }

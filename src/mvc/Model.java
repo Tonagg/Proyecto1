@@ -3,11 +3,13 @@ package src.mvc;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import src.*;
-import src.builder.*;
-import src.factory.*;
 import src.compatibilidad.*;
+import src.Computadora;
 import src.Ticket;
+import src.builder.ComputadoraDirector;
+import src.builder.ComputadoraPersonalizadaBuilder;
+import src.builder.ComputadoraPrearmadaBuilder;
+import src.factory.*;
 
 /**
  * Modelo de dominio: construye computadoras, verifica compatibilidad
@@ -28,10 +30,23 @@ public class Model {
         this.factory = factory;
     }
 
+    /**
+     * Permite al Controller acceder al catálogo completo de componentes.
+     */
+    public ComponenteFactory getFactory() {
+        return factory;
+    }
+
+    /**
+     * Guarda la PC que el Controller va montando paso a paso.
+     */
+    public void setComputadoraActual(Computadora pc) {
+        this.computadoraActual = pc;
+    }
+
     /* ----------------------------------------------------------
        Construcción de PC personalizada (Builder + Director)
-       En una UI real la selección vendría de la Vista; aquí se
-       toma la primera opción disponible a modo de ejemplo.
+       En su versión “todo de golpe” (puedes seguir usándola si lo deseas).
        ---------------------------------------------------------- */
     public Computadora crearComputadoraPersonalizada() {
         ComputadoraPersonalizadaBuilder builder = new ComputadoraPersonalizadaBuilder();

@@ -32,9 +32,10 @@ public abstract class SoftwareDecorator extends Computadora {
         this.costoExtra       = costoExtra;
 
         /* — evita duplicados — */
-        if (getDescripcion().contains(descripcionExtra))
-            throw new IllegalStateException(
-                "Ya se había añadido %s".formatted(descripcionExtra));
+        if (base.getDescripcion().contains(descripcionExtra))
+        throw new IllegalStateException(
+            "Ya se había añadido %s".formatted(descripcionExtra));
+    
     }
 
     /* ──────── delegaciones automáticas ──────── */

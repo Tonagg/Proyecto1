@@ -63,7 +63,7 @@ public final class IntelNvidiaFactory implements ComponenteFactory {
 
     /* --- Almacenamiento ---------------------------------------------------- */
     private static final Map<Integer, Almacenamiento> SSD_MAP = Map.ofEntries(
-        Map.entry( 500, new ProductoAlmacenamiento("Kingston SSD 500 GB",   710, Marca.KINGSTON,  500, true)),
+        Map.entry (500, new ProductoAlmacenamiento("Kingston SSD 500 GB",   710, Marca.KINGSTON,  500, true)),
         Map.entry(1000, new ProductoAlmacenamiento("Kingston SSD 1 TB",   1_154, Marca.KINGSTON, 1000, true)),
         Map.entry(2000, new ProductoAlmacenamiento("Kingston SSD 2 TB",   2_160, Marca.KINGSTON, 2000, true)),
         Map.entry(4000, new ProductoAlmacenamiento("Kingston SSD 4 TB",  11_049, Marca.KINGSTON, 4000, true))

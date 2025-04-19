@@ -2,7 +2,7 @@ package src.factory;
 
 import java.util.*;
 
-import src.adapter.AdaptadorGPUnvidia;
+import src.adapter.AdaptadorGPUNvidia;
 import src.adapter.AdaptadorMotherboardIntel;
 
 public final class AmdFactory implements ComponenteFactory {
@@ -19,7 +19,7 @@ public final class AmdFactory implements ComponenteFactory {
 
     /* --- Peticiones puntuales --- */
     @Override public CPU cpu(String modelo)       { return get(CPU_MAP, modelo); }
-    @Override public GPU gpu(String modelo)       { return new AdaptadorGPUnvidia(intel.gpu(modelo)); }
+    @Override public GPU gpu(String modelo)       { return new AdaptadorGPUNvidia(intel.gpu(modelo)); }
     @Override public Motherboard motherboard(String m) {
         return new AdaptadorMotherboardIntel(intel.motherboard(m));
     }
@@ -31,7 +31,7 @@ public final class AmdFactory implements ComponenteFactory {
 
     /* --- Catálogos --- */
     @Override public Collection<CPU> catalogoCPU()            { return CPU_MAP.values(); }
-    @Override public Collection<GPU> catalogoGPU()            { return wrap(intel.catalogoGPU(), AdaptadorGPUnvidia::new); }
+    @Override public Collection<GPU> catalogoGPU()            { return wrap(intel.catalogoGPU(), AdaptadorGPUNvidia::new); }
     @Override public Collection<RAM> catalogoRAM()            { return intel.catalogoRAM(); }
     @Override public Collection<Motherboard> catalogoMotherboard() {
         return wrap(intel.catalogoMotherboard(), AdaptadorMotherboardIntel::new);
