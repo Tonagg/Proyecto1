@@ -1,10 +1,13 @@
-// src/mvc/Controller.java
 package src.mvc;
 
 import src.*;
 import src.decorator.*;
 import src.Ticket;
 
+/**
+ * Controlador del patrón MVC.  Orquesta la interacción
+ * entre la vista de consola y el modelo de dominio.
+ */
 public class Controller {
 
     private final Model model;
@@ -15,13 +18,15 @@ public class Controller {
         this.view  = v;
     }
 
+    /** Punto de entrada de la UI de consola */
     public void iniciar() {
 
         /* -------- Selección de tipo de equipo -------- */
         Computadora pc;
         int op = view.mostrarMenu();
-        if (op == 1) pc = model.crearComputadoraPersonalizada();
-        else {
+        if (op == 1) {
+            pc = model.crearComputadoraPersonalizada();
+        } else {
             String mod = view.solicitarModeloPrearmada();
             pc = model.crearComputadoraPrearmada(mod);
         }
@@ -45,14 +50,16 @@ public class Controller {
                 case 2 -> pc = new OfficeDecorator(pc);
                 case 3 -> pc = new PhotoshopDecorator(pc);
                 case 4 -> pc = new WSLDecorator(pc);
-                case 0 -> { /* salir */ }
+                case 0 -> {
+                    /* salir */
+                }
                 default -> view.mostrarMensaje("Opción inválida.");
             }
             view.mostrarPcParcial(pc);
         }
 
         /* -------- Ticket final -------- */
-        Ticket ticket = model.generarTicket(""); // aquí puedes pasar notas extra si guardaste
+        Ticket ticket = model.generarTicket("");
         view.mostrarTicket(ticket);
     }
 }

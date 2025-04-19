@@ -1,10 +1,14 @@
-// src/mvc/View.java
 package src.mvc;
 
 import java.util.Scanner;
 import src.Ticket;
 import src.Computadora;
 
+/**
+ * Vista muy sencilla basada en consola.
+ * Encapsula todo el I/O para que el modelo y el controlador
+ * permanezcan independientes de la UI concreta.
+ */
 public class View {
 
     private final Scanner sc = new Scanner(System.in);
