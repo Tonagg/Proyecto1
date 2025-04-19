@@ -113,18 +113,33 @@ public class Controller {
             }
         }
 
-        // —— Software adicional (Decorators) ——
-        while (view.confirmarAgregarSoftware()) {
-            switch (view.seleccionarSoftware()) {
-                case 1 -> pc = new WindowsDecorator(pc);
-                case 2 -> pc = new OfficeDecorator(pc);
-                case 3 -> pc = new PhotoshopDecorator(pc);
-                case 4 -> pc = new WSLDecorator(pc);
-                case 0 -> { /* salir */ }
-                default -> view.mostrarMensaje("Opción inválida.");
+       // —— Software adicional (Decorators) ——
+boolean seguirAgregando = view.confirmarAgregarSoftware();
+while (seguirAgregando) {
+    int opcion = view.seleccionarSoftware();
+    try {
+        switch (opcion) {
+            case 1 -> pc = new WindowsDecorator(pc);
+            case 2 -> pc = new OfficeDecorator(pc);
+            case 3 -> pc = new PhotoshopDecorator(pc);
+            case 4 -> pc = new WSLDecorator(pc);
+            case 0 -> {
+                seguirAgregando = false;
+                continue;
             }
-            view.mostrarPcParcial(pc);
+            default -> {
+                view.mostrarMensaje("Opción inválida.");
+                continue;
+            }
         }
+        view.mostrarPcParcial(pc);
+    } catch (IllegalStateException e) {
+        view.mostrarMensaje(e.getMessage());
+    }
+
+    seguirAgregando = view.confirmarAgregarSoftware();
+}
+
 
         // —— Ticket final ——
         Ticket ticket = model.generarTicket("");

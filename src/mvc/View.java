@@ -1,5 +1,6 @@
 package src.mvc;
 
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 import src.Ticket;
@@ -16,41 +17,62 @@ public class View {
 
     /* ---------------- Menú principal ---------------- */
     public int mostrarMenu() {
-        System.out.println("=== MONOSCHINOS MX ===");
-        System.out.println("1) Computadora personalizada");
-        System.out.println("2) Computadora prearmada");
-        System.out.print("Elige opción: ");
-        return sc.nextInt();
+        while (true) {
+            System.out.println("=== MONOSCHINOS MX ===");
+            System.out.println("1) Computadora personalizada");
+            System.out.println("2) Computadora prearmada");
+            System.out.print("Elige opción: ");
+            try {
+                int opcion = Integer.parseInt(sc.nextLine().trim());
+                if (opcion == 1 || opcion == 2)
+                    return opcion;
+                else
+                    System.out.println("Opción no válida. Intenta de nuevo.\n");
+            } catch (NumberFormatException e) {
+                System.out.println("Entrada inválida. Escribe solo un número (1 o 2).\n");
+            }
+        }
     }
 
     public String solicitarModeloPrearmada() {
         System.out.print("Modelo prearmado (Gamer/Basica/Estudio): ");
-        return sc.next();
+        return sc.nextLine().trim();
     }
 
     /* ---------------- Compatibilidad ---------------- */
     public boolean confirmarForzarCompat() {
         System.out.print("¿Desea forzar compatibilidad con adaptadores? (s/n): ");
-        return sc.next().equalsIgnoreCase("s");
+        return sc.nextLine().trim().equalsIgnoreCase("s");
     }
 
     /* ---------------- Software / Decorators --------- */
     public boolean confirmarAgregarSoftware() {
+    while (true) {
         System.out.print("¿Agregar software extra? (s/n): ");
-        return sc.next().equalsIgnoreCase("s");
+        String input = sc.nextLine().trim().toLowerCase();
+        if (input.equals("s")) return true;
+        if (input.equals("n")) return false;
+        System.out.println("Entrada inválida. Escribe 's' para sí o 'n' para no.");
     }
+}
 
     public int seleccionarSoftware() {
-        System.out.println("""
-            Elija software:
-             1) Windows 10/11
-             2) Office 365
-             3) Adobe Photoshop
-             4) WSL Terminal
-             0) Ninguno
-            """);
-        System.out.print("Opción: ");
-        return sc.nextInt();
+        while (true) {
+            System.out.println("""
+                Elija software:
+                 1) Windows 10/11
+                 2) Office 365
+                 3) Adobe Photoshop
+                 4) WSL Terminal
+                 0) Ninguno
+                """);
+            System.out.print("Opción: ");
+            try {
+                return Integer.parseInt(sc.nextLine().trim());
+            } catch (NumberFormatException e) {
+                System.out.println("Entrada inválida. Intenta con un número del 0 al 4.\n");
+            }
+        }
     }
 
     /* ---------------- Selección genérica de catálogo ---------------- */
@@ -67,11 +89,18 @@ public class View {
         for (int i = 0; i < opciones.size(); i++) {
             System.out.printf("  %2d) %s%n", i + 1, opciones.get(i).toString());
         }
-        int idx;
-        do {
+
+        int idx = -1;
+        while (true) {
             System.out.printf("Opción (1–%d): ", opciones.size());
-            idx = sc.nextInt();
-        } while (idx < 1 || idx > opciones.size());
+            try {
+                idx = Integer.parseInt(sc.nextLine().trim());
+                if (idx >= 1 && idx <= opciones.size()) break;
+                else System.out.println("Opción fuera de rango. Intenta de nuevo.");
+            } catch (NumberFormatException e) {
+                System.out.println("Entrada inválida. Intenta con un número.");
+            }
+        }
         return idx;
     }
 
@@ -84,11 +113,17 @@ public class View {
      * @return número entre 1 y max
      */
     public int solicitarCantidad(String nombre, int max) {
-        System.out.printf("¿Cuántos %s desea? (1–%d): ", nombre, max);
-        int n = sc.nextInt();
-        if (n < 1) n = 1;
-        if (n > max) n = max;
-        return n;
+        while (true) {
+            System.out.printf("¿Cuántos %s desea? (1–%d): ", nombre, max);
+            try {
+                int n = Integer.parseInt(sc.nextLine().trim());
+                if (n < 1) return 1;
+                if (n > max) return max;
+                return n;
+            } catch (NumberFormatException e) {
+                System.out.println("Entrada inválida. Intenta con un número.");
+            }
+        }
     }
 
     /* ---------------- Mensajes / Salida -------------- */
@@ -106,3 +141,4 @@ public class View {
         System.out.printf("Subtotal: $%.2f%n", pc.calcularPrecioTotal());
     }
 }
+

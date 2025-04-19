@@ -19,4 +19,9 @@ public final class AdaptadorMotherboardIntel implements Motherboard {
     @Override public String  getDescripcion() { return "[Adaptado] " + mb.getDescripcion(); }
     @Override public double  getPrecio()      { return mb.getPrecio(); }
     @Override public String  getChipset()     { return mb.getChipset(); }
+
+    @Override public String toString() {
+        return getDescripcion();
+    }
 }
+
