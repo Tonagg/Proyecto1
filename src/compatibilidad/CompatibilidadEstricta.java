@@ -1,15 +1,15 @@
+/* src/compatibilidad/CompatibilidadEstricta.java */
 package src.compatibilidad;
 
 import src.Computadora;
 
-/** No permite ninguna adaptación: si hay conflictos => error. */
+/** No permite ninguna adaptación: si hay conflictos se informa. */
 public class CompatibilidadEstricta extends CompatibilidadBase {
 
-    @Override
-    public String adaptar(Computadora pc) {
+    @Override public String adaptar(Computadora pc) {
         return """
-               Modo estricto ‑ sin adaptaciones.
+               Modo estricto  –  sin adaptaciones.
                Conflictos: %s
-               """.formatted(String.join(", ", getConflictos(pc)));
+               """.formatted(String.join(", ", conflictos(pc)));
     }
 }

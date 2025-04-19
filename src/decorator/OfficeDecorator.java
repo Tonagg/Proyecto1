@@ -1,4 +1,4 @@
-/* OfficeDecorator.java */
+/* src/decorator/OfficeDecorator.java */
 package src.decorator;
 
 import src.Computadora;

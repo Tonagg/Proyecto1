@@ -1,17 +1,12 @@
+/* src/builder/ComputadoraDirector.java */
 package src.builder;
-// 4) Director que orquesta el Builder personalizado
-import java.util.List;
 
-import src.*;
-import src.factory.Almacenamiento;
-import src.factory.CPU;
-import src.factory.FuenteDePoder;
-import src.factory.GPU;
-import src.factory.Gabinete;
-import src.factory.Motherboard;
-import src.factory.RAM;
+import java.util.List;
+import src.Computadora;
+import src.factory.*;
 
 public class ComputadoraDirector {
+
     private final ComputadoraBuilder builder;
 
     public ComputadoraDirector(ComputadoraBuilder builder) {
@@ -19,21 +14,17 @@ public class ComputadoraDirector {
     }
 
     public void construirComputadora(
-        CPU cpu,
-        List<RAM> ramModules,
-        GPU gpu,
-        List<Almacenamiento> discos,
-        FuenteDePoder fuente,
-        Motherboard mb,
-        Gabinete gab
-    ) {
+            CPU cpu, List<RAM> ram,
+            GPU gpu, List<Almacenamiento> discos,
+            FuenteDePoder psu, Motherboard mb, Gabinete case_) {
+
         builder.agregarCPU(cpu);
-        ramModules.forEach(builder::agregarRAM);
+        ram.forEach(builder::agregarRAM);
         builder.agregarGPU(gpu);
         discos.forEach(builder::agregarDisco);
-        builder.agregarFuente(fuente);
+        builder.agregarFuente(psu);
         builder.agregarMotherboard(mb);
-        builder.agregarGabinete(gab);
+        builder.agregarGabinete(case_);
     }
 
     public Computadora obtenerComputadora() {

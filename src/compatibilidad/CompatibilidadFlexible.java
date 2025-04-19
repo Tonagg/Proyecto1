@@ -1,16 +1,17 @@
+/* src/compatibilidad/CompatibilidadFlexible.java */
 package src.compatibilidad;
 
 import src.Computadora;
+import src.adapter.AdaptadorGPUNvidia;
+import src.adapter.AdaptadorMotherboardIntel;
 import src.factory.*;
 
-import src.adapter.AdaptadorGPUnvidia;
-import src.adapter.AdaptadorMotherboardIntel;
-
-/** Intenta resolver los problemas mediante *Adapter*. */
+/**
+ * Intenta resolver problemas automáticamente usando el patrón *Adapter*.
+ */
 public class CompatibilidadFlexible extends CompatibilidadBase {
 
-    @Override
-    public String adaptar(Computadora pc) {
+    @Override public String adaptar(Computadora pc) {
 
         StringBuilder nota = new StringBuilder();
 
@@ -18,17 +19,16 @@ public class CompatibilidadFlexible extends CompatibilidadBase {
         GPU         gpu = pc.getGpu();
         Motherboard mb  = pc.getMotherboard();
 
-        /* CPU AMD + GPU Nvidia → adaptar GPU */
-        if ("AMD".equals(getMarca(cpu)) && "Nvidia".equals(getMarca(gpu))
-            && !(gpu instanceof AdaptadorGPUnvidia)) {
+        /* CPU AMD + GPU Nvidia → adaptar GPU */
+        if (marca(cpu) == Marca.AMD && marca(gpu) == Marca.NVIDIA &&
+            !(gpu instanceof AdaptadorGPUNvidia)) {
 
-            pc.setGpu(new AdaptadorGPUnvidia(gpu));
+            pc.setGpu(new AdaptadorGPUNvidia(gpu));
             nota.append("‑ GPU Nvidia adaptada para CPU AMD.\n");
         }
 
-        /* CPU AMD + Motherboard Intel → adaptar MB */
-        if ("AMD".equals(getMarca(cpu)) &&
-            mb.getDescripcion().toLowerCase().contains("intel") &&
+        /* CPU AMD + Motherboard Intel / MSI → adaptar MB */
+        if (marca(cpu) == Marca.AMD && marca(mb) == Marca.INTEL &&
             !(mb instanceof AdaptadorMotherboardIntel)) {
 
             pc.setMotherboard(new AdaptadorMotherboardIntel(mb));
@@ -36,16 +36,12 @@ public class CompatibilidadFlexible extends CompatibilidadBase {
         }
 
         /* Resultado final */
-        if (!getConflictos(pc).isEmpty()) {
+        var pendientes = conflictos(pc);
+        if (!pendientes.isEmpty()) {
             nota.append("⚠ Persisten incompatibilidades: ")
-                .append(String.join(", ", getConflictos(pc)))
+                .append(String.join(", ", pendientes))
                 .append('\n');
         }
         return nota.toString();
-    }
-
-    /* util privado para evitar repetir código */
-    private String getMarca(Object comp) {
-        return (comp instanceof src.factory.Componente c) ? c.getMarca() : "Desconocida";
     }
 }

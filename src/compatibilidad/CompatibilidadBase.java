@@ -1,65 +1,60 @@
+/* src/compatibilidad/CompatibilidadBase.java */
 package src.compatibilidad;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import src.Computadora;
-import src.factory.*;
-
-import src.adapter.AdaptadorGPUnvidia;
+import src.adapter.AdaptadorGPUNvidia;
 import src.adapter.AdaptadorMotherboardIntel;
+import src.factory.*;
 
 /**
  * Implementa el 90 % de la lógica de compatibilidad.
- * Las sub­clases solo deciden qué hacer cuando hay conflictos.
+ * Las sub‑clases solo deciden *qué hacer* cuando hay conflictos.
  */
 public abstract class CompatibilidadBase implements VerificaCompatibilidad {
 
-    /* ===== API pública que impone la interfaz ===== */
-
-    @Override
-    public final boolean esCompatible(Computadora pc) {
-        return getConflictos(pc).isEmpty();
+    /* ——— API pública ——— */
+    @Override public final boolean esCompatible(Computadora pc) {
+        return conflictos(pc).isEmpty();
     }
 
-    /* ===== Helpers que reutilizan las subclases ===== */
+    /* ——— Helpers a disposición de las sub‑clases ——— */
+    protected final List<String> conflictos(Computadora pc) {
 
-    /** Devuelve la lista de problemas detectados.  */
-    protected List<String> getConflictos(Computadora pc) {
-
-        List<String> problemas = new ArrayList<>();
+        List<String> errores = new ArrayList<>();
 
         CPU         cpu = pc.getCpu();
         GPU         gpu = pc.getGpu();
         Motherboard mb  = pc.getMotherboard();
 
-        // si aún no se han asignado piezas no evaluamos
-        if (cpu == null || gpu == null || mb == null) return problemas;
+        /* piezas incompletas → no evaluamos todavía */
+        if (cpu == null || gpu == null || mb == null) return errores;
 
-        String marcaCPU = getMarca(cpu);
-        String marcaGPU = getMarca(gpu);
-        String chipset  = mb.getDescripcion(); // no tenemos un getter formal
+        Marca marcaCPU = marca(cpu);
+        Marca marcaGPU = marca(gpu);
+        Marca marcaMB  = marca(mb);
 
-        /* Regla 1 – CPU AMD + GPU Nvidia  */
-        if ("AMD".equals(marcaCPU) && "Nvidia".equals(marcaGPU)
-            && !(gpu instanceof AdaptadorGPUnvidia)) {
-            problemas.add("CPU AMD con GPU Nvidia sin adaptar.");
+        /* Regla 1 – CPU AMD + GPU Nvidia sin adaptar */
+        if (marcaCPU == Marca.AMD && marcaGPU == Marca.NVIDIA &&
+            !(gpu instanceof AdaptadorGPUNvidia)) {
+            errores.add("CPU AMD con GPU Nvidia sin adaptar.");
         }
 
-        /* Regla 2 – CPU y Motherboard de marcas distintas */
-        if (!chipset.toLowerCase().contains(marcaCPU.toLowerCase())
-            && !(mb instanceof AdaptadorMotherboardIntel)) {
-            problemas.add("CPU " + marcaCPU + " con motherboard de chipset distinto.");
+        /* Regla 2 – CPU y Motherboard de marcas distintas */
+        if (marcaCPU != marcaMB &&
+            !(mb instanceof AdaptadorMotherboardIntel)) {
+            errores.add("Motherboard %s usada con CPU %s."
+                        .formatted(marcaMB, marcaCPU));
         }
 
-        // …aquí puedes añadir más reglas sin tocar las subclases
-        return problemas;
+        // …añade aquí más reglas si las necesitas
+        return errores;
     }
 
-    /* ===== util ===== */
-
-    /** Obtiene la marca usando `instanceof Componente` sin perder la interfaz. */
-    private String getMarca(Object comp) {
-        return (comp instanceof src.factory.Componente c) ? c.getMarca() : "Desconocida";
+    /* ——— util ——— */
+    protected final Marca marca(Object c) {
+        return (c instanceof Componente comp) ? comp.getMarca() : null;
     }
 }
