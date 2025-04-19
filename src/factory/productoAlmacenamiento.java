@@ -1,29 +1,23 @@
+/* src/factory/Drive.java */
 package src.factory;
 
+public final class ProductoAlmacenamiento extends Componente implements Almacenamiento {
 
+    private final int  capacidadGB;
+    private final boolean ssd;
 
-public class productoAlmacenamiento extends Componente implements Almacenamiento {
-    private int capacidadAlmacenamiento;
-     private String tipodeAlmacenamiento;
-
-
-    public productoAlmacenamiento (String nombre, double precio, String marca, String tipoComponente, int capacidadAlmacenamiento, String tipodeAlmacenamiento) {
-        // La marca se fija en "Intel"
-        super(nombre, precio, marca, "Almacenamineto" );
-        this.capacidadAlmacenamiento = capacidadAlmacenamiento;
-        this.tipodeAlmacenamiento= tipodeAlmacenamiento;
-
-
-}
-
-    @Override
-    public String getDescripcion() {
-        return nombre + " de marca: " + marca + " con " + capacidadAlmacenamiento +
-       "GB de capacidad de almacenamiento, tipo " + tipodeAlmacenamiento +
-       ". PRECIO: " + precio;
+    public ProductoAlmacenamiento(String modelo, double precio, Marca marca,
+                 int capacidadGB, boolean ssd) {
+        super(modelo, precio, marca, TipoComponente.STORAGE);
+        this.capacidadGB = capacidadGB;
+        this.ssd         = ssd;
     }
 
-    public double getPrecio() {
-        return precio;
+    @Override public int  getCapacidadGB() { return capacidadGB; }
+    @Override public boolean esSSD()       { return ssd; }
+
+    @Override public String getDescripcion() {
+        return "%s | %d GB %s".formatted(
+            super.toString(), capacidadGB, ssd ? "SSD" : "HDD");
     }
 }

@@ -1,20 +1,18 @@
+/* src/factory/FuentePoder.java */
 package src.factory;
 
+public final class ProductoFuenteDePoder extends Componente implements FuenteDePoder {
 
-public class productoFuenteDePoder extends Componente implements FuenteDePoder {
-    private int potenciaMaxima;
+    private final int potenciaW;
 
-    public productoFuenteDePoder (String nombre, double precio, String marca, String tipoComponente, int potenciaMaxima) {
-        // La marca se fija en 
-        super(nombre, precio, marca, "Fuente de poder");
-        this.potenciaMaxima = potenciaMaxima;
+    public ProductoFuenteDePoder(String modelo, double precio, Marca marca, int potenciaW) {
+        super(modelo, precio, marca, TipoComponente.PSU);
+        this.potenciaW = potenciaW;
     }
 
-    @Override
-    public String getDescripcion() {
-        return nombre + "de marca:" + marca + "con " + potenciaMaxima +"potencia Maxima"  + " PRECIO:" + precio;
-    }
-    public double getPrecio() {
-        return precio;
+    @Override public int getPotenciaW() { return potenciaW; }
+
+    @Override public String getDescripcion() {
+        return "%s | %d W".formatted(super.toString(), potenciaW);
     }
 }

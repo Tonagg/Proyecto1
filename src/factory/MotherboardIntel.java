@@ -1,19 +1,18 @@
+/* src/factory/MotherboardIntel.java */
 package src.factory;
 
-public class MotherboardIntel extends Componente implements Motherboard {
-    private String tipoDeChipSet;
+public final class MotherboardIntel extends Componente implements Motherboard {
 
-    public MotherboardIntel(String nombre, double precio, String marca, String tipoComponente, String tipoDeChipSet) {
-        // La marca se fija en "Intel"
-        super(nombre, precio, marca, "Motherboard");
-        this.tipoDeChipSet = tipoDeChipSet;
+    private final String chipset;
+
+    public MotherboardIntel(String modelo, double precio, Marca marca, String chipset) {
+        super(modelo, precio, marca, TipoComponente.MOTHERBOARD);
+        this.chipset = chipset;
     }
 
-    @Override
-    public String getDescripcion() {
-        return nombre + "de marca:" + marca + "con " + tipoDeChipSet +"tipo de tipo de ChipSet"  + " PRECIO:" + precio;
-    }
-    public double getPrecio() {
-        return precio;
+    @Override public String getChipset() { return chipset; }
+
+    @Override public String getDescripcion() {
+        return "%s | chipset %s".formatted(super.toString(), chipset);
     }
 }

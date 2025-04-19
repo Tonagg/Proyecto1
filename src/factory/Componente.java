@@ -1,34 +1,37 @@
+/* src/factory/Componente.java */
 package src.factory;
-// Componente.java
-// Clase abstracta que define atributos y método común para todos los componentes.
+
+/**
+ * Todos los productos de hardware heredan de esta clase inmutable.
+ * Implementa un {@code toString()} genérico y deja a las sub‑clases
+ * añadir detalles concretos en {@link #getDescripcion()}.
+ */
 public abstract class Componente {
-    protected String nombre;
-    protected double precio;
-    protected String marca;
-    protected String tipoComponente;
+    private final String modelo;
+    private final double precio;
+    private final Marca  marca;
+    private final TipoComponente tipo;
 
-    public Componente(String nombre, double precio, String marca, String tipoComponente) {
-        this.nombre = nombre;
+    protected Componente(String modelo,
+                         double precio,
+                         Marca  marca,
+                         TipoComponente tipo) {
+        this.modelo = modelo;
         this.precio = precio;
-        this.marca = marca;
-        this.tipoComponente = tipoComponente;
+        this.marca  = marca;
+        this.tipo   = tipo;
     }
 
-    public double getPrecio() {
-        return precio;
+    public double         getPrecio()  { return precio; }
+    public String         getModelo()  { return modelo; }
+    public Marca          getMarca()   { return marca;  }
+    public TipoComponente getTipo()    { return tipo;   }
+
+    /** Descripción genérica “MARCA modelo – $precio”. */
+    @Override public String toString() {
+        return "%s %s – $%,.2f".formatted(marca, modelo, precio);
     }
 
-    public String getNombre() {
-        return nombre;
-    }
-
-    public String getMarca() {
-        return marca;
-    }
-
-    public String TipoComponente(){
-        return tipoComponente;
-    }
-    
+    /** Cada sub‑clase añade sus propios atributos. */
     public abstract String getDescripcion();
 }

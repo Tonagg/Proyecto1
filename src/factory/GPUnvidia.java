@@ -1,21 +1,16 @@
+/* src/factory/GPUNvidia.java */
 package src.factory;
 
+public final class GPUNvidia extends Componente implements GPU {
 
-public class GPUnvidia extends Componente implements GPU {
-    private String tipoDeMemoria;
+    private final String tipoMemoria;
 
-    public GPUnvidia(String nombre, double precio, String marca, String tipoComponente, String tipoDeMemoria) {
-        // La marca se fija en "Intel"
-        super(nombre, precio, "Nvidia", "GPU");
-        this.tipoDeMemoria = tipoDeMemoria;
+    public GPUNvidia(String modelo, double precio, String tipoMemoria) {
+        super(modelo, precio, Marca.NVIDIA, TipoComponente.GPU);
+        this.tipoMemoria = tipoMemoria;
     }
 
-    @Override
-    public String getDescripcion() {
-        return nombre + "de marca:" + marca + "con " + tipoDeMemoria +"tipo de memoria"  + " PRECIO:" + precio;
-    
-    }
-    public double getPrecio() {
-        return precio;
+    @Override public String getDescripcion() {
+        return "%s | memoria %s".formatted(super.toString(), tipoMemoria);
     }
 }

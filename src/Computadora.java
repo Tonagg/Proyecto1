@@ -71,8 +71,8 @@ public class Computadora {
             throw new IllegalArgumentException("Solo se permiten hasta 4 módulos de RAM.");
         }
         // Verificar que la capacidad total no exceda 128 GB
-        int capacidadActual = ramModules.stream().mapToInt(RAM::getTamanioDeMemoria).sum();
-        if (capacidadActual + modulo.getTamanioDeMemoria() > 128) {
+        int capacidadActual = ramModules.stream().mapToInt(RAM::getCapacidadGB).sum();
+        if (capacidadActual + modulo.getCapacidadGB() > 128) {
             throw new IllegalArgumentException("La capacidad total de RAM no puede exceder 128 GB.");
         }
         ramModules.add(modulo);

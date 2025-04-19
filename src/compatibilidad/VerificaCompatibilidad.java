@@ -1,4 +1,5 @@
 package src.compatibilidad;
+
 import src.Computadora;
 
 /**

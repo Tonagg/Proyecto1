@@ -1,19 +1,16 @@
+/* src/factory/CPUIntel.java */
 package src.factory;
 
-public class CPUIntel extends Componente implements CPU {
-    private int cantidadNucleos;
+public final class CPUIntel extends Componente implements CPU {
 
-    public CPUIntel(String nombre, double precio, String marca, String tipoComponente, int cantidadNucleos) {
-        // La marca se fija en "Intel"
-        super(nombre, precio, "Intel", "CPU");
-        this.cantidadNucleos = cantidadNucleos;
+    private final int nucleos;
+
+    public CPUIntel(String modelo, double precio, int nucleos) {
+        super(modelo, precio, Marca.INTEL, TipoComponente.CPU);
+        this.nucleos = nucleos;
     }
 
-    @Override
-    public String getDescripcion() {
-        return nombre + "de marca:" + marca + "con " + cantidadNucleos +"nucleos"  + " PRECIO:" + precio;
-    }
-    public double getPrecio() {
-        return precio;
+    @Override public String getDescripcion() {
+        return "%s | %d núcleos".formatted(super.toString(), nucleos);
     }
 }

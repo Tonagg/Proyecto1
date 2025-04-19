@@ -1,18 +1,10 @@
+/* PhotoshopDecorator.java */
 package src.decorator;
+
 import src.Computadora;
 
-public class PhotoshopDecorator extends ComputadoraDecorator {
-    public PhotoshopDecorator(Computadora computadora) {
-        super(computadora);
-    }
-
-    @Override
-    public double calcularPrecioTotal() {
-        return super.calcularPrecioTotal() + 1200;
-    }
-
-    @Override
-    public String getDescripcion() {
-        return super.getDescripcion() + " + Adobe Photoshop";
+public class PhotoshopDecorator extends SoftwareDecorator {
+    public PhotoshopDecorator(Computadora pc) {
+        super(pc, "Adobe Photoshop", 1200);
     }
 }

@@ -1,87 +1,138 @@
 package src.builder;
-import java.util.List;
 
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.function.Consumer;
 
 import src.*;
-import src.factory.Almacenamiento;
-import src.factory.CPU;
-import src.factory.FuenteDePoder;
-import src.factory.GPU;
-import src.factory.Gabinete;
-import src.factory.Motherboard;
-import src.factory.RAM;
+import src.factory.*;
 
+/**
+ * Builder para equipos pre‑armados.  
+ * La tabla de configuraciones evita modificar el código
+ * cuando se agregan nuevos modelos.
+ */
 public class ComputadoraPrearmadaBuilder implements ComputadoraBuilder {
-    private final Computadora computadora;
+
+    private final Computadora computadora = new Computadora();
     private final ComponenteFactory factory;
 
-    /**
-     * @param factory Instancia de intel_Nvidia o AmdFactory
-     * @param modelo  Nombre del modelo prearmado ("Gamer", "Basica", etc.)
-     */
-    public ComputadoraPrearmadaBuilder(ComponenteFactory factory, String modelo) {
-        this.factory     = factory;
-        this.computadora = new Computadora();
-        configurarModelo(modelo);
+    /** Tabla <modelo, acción que configura la computadora>. */
+    private static final Map<String, Consumer<ComputadoraPrearmadaBuilder>> CONFIGS =
+            new HashMap<>();
+
+    static {
+        /* Las lambdas usan los números de parte NOMBRE en lugar
+           de índices duros. Así, si cambia el orden del inventario
+           tu código sigue funcionando.                         */
+
+        CONFIGS.put("gamer", b -> {
+            b.cpu   ("Core i7-13700K");
+            b.ram   ("32GB", 4);
+            b.gpu   ("RTX 4080");
+            b.disco ("SSD Kingston 500GB");
+            b.fuente("EVGA 1000W");
+            b.mb    ("ROG Maximus Z790 Hero");
+            b.gab   ("H6 Flow ATX");
+        });
+
+        CONFIGS.put("basica", b -> {
+            b.cpu   ("Core i3-13100");
+            b.ram   ("8GB", 1);
+            b.gpu   ("GTX 1660");
+            b.disco ("HDD Western Digital Blue 500GB");
+            b.fuente("EVGA 800W");
+            b.mb    ("TUF Gaming B760-Plus WIFI D4");
+            b.gab   ("Lancer ATX");
+        });
+
+        CONFIGS.put("estudio", b -> {
+            b.cpu   ("Core i5-13600K");
+            b.ram   ("16GB", 2);
+            b.gpu   ("RTX 3060");
+            b.disco ("SSD Kingston 1TB");
+            b.fuente("EVGA 1500W");
+            b.mb    ("MEG Z790 Godlike");
+            b.gab   ("H6 Flow ATX");
+        });
     }
 
-    private void configurarModelo(String modelo) {
-        List<CPU>               cpus    = factory.getCPUs();
-        List<GPU>               gpus    = factory.getGPUs();
-        List<RAM>               rams    = factory.getRAM();
-        List<Almacenamiento>    discos  = factory.getAlmacenamiento();
-        List<FuenteDePoder>     fuentes = factory.getFuente();
-        List<Motherboard>       mbs     = factory.getMotherboard();
-        List<Gabinete>          gabs    = factory.getGabinete();
+    /* ------------ constructor ----------- */
 
-        switch (modelo.toLowerCase()) {
-            case "gamer":
-                computadora.setCpu(cpus.get(2));           // Core i7
-                for (int i = 0; i < 4; i++)                 // 4 x 32 GB
-                    computadora.agregarRAM(rams.get(2));
-                computadora.setGpu(gpus.get(3));           // RTX 4080
-                computadora.agregarDisco(discos.get(4));    // SSD 500 GB
-                computadora.setFuente(fuentes.get(1));      // Corsair 1000 W
-                computadora.setMotherboard(mbs.get(0));     // ROG Z790 Hero
-                computadora.setGabinete(gabs.get(0));       // NZXT H6 Flow
-                break;
+    public ComputadoraPrearmadaBuilder(ComponenteFactory factory,
+                                       String modelo) {
+        this.factory = factory;
+        Consumer<ComputadoraPrearmadaBuilder> cfg =
+                CONFIGS.get(modelo.toLowerCase());
 
-            case "basica":
-                computadora.setCpu(cpus.get(0));            // Core i3
-                computadora.agregarRAM(rams.get(0));        // 8 GB
-                computadora.setGpu(gpus.get(0));            // GTX 1660
-                computadora.agregarDisco(discos.get(0));    // HDD 500 GB
-                computadora.setFuente(fuentes.get(0));      // EVGA 800 W
-                computadora.setMotherboard(mbs.get(1));     // TUF B760-Plus
-                computadora.setGabinete(gabs.get(1));       // Yeyian Lancer
-                break;
+        if (cfg == null)
+            throw new IllegalArgumentException("Modelo desconocido: " + modelo);
 
-            case "estudio":
-                // Ejemplo de nuevo modelo "Estudio"
-                computadora.setCpu(cpus.get(1));            // Core i5
-                computadora.agregarRAM(rams.get(1));        // 16 GB
-                computadora.setGpu(gpus.get(1));            // RTX 3060
-                computadora.agregarDisco(discos.get(5));    // SSD 1 TB
-                computadora.setFuente(fuentes.get(2));      // EVGA 1500 W
-                computadora.setMotherboard(mbs.get(2));     // MEG Z790 Godlike
-                computadora.setGabinete(gabs.get(0));       // NZXT H6 Flow
-                break;
-
-            // añade aquí tantos casos como quieras
-
-            default:
-                throw new IllegalArgumentException("Modelo desconocido: " + modelo);
-        }
+        cfg.accept(this);          // aplica la configuración
     }
 
-    // Métodos del Builder no aplican en prearmado
-    @Override public void agregarCPU(CPU cpu)                   { /* no-op */ }
-    @Override public void agregarRAM(RAM ram)                   { /* no-op */ }
-    @Override public void agregarGPU(GPU gpu)                   { /* no-op */ }
-    @Override public void agregarDisco(Almacenamiento disco)    { /* no-op */ }
-    @Override public void agregarFuente(FuenteDePoder fuente)   { /* no-op */ }
-    @Override public void agregarMotherboard(Motherboard mb)    { /* no-op */ }
-    @Override public void agregarGabinete(Gabinete gab)         { /* no-op */ }
+    /* ------------- helpers “DSL” --------------- */
+
+    private void cpu(String nombre) {
+        computadora.setCpu(
+            factory.getCPUs().stream()
+                   .filter(c -> c.getDescripcion().contains(nombre))
+                   .findFirst().orElseThrow());
+    }
+
+    private void gpu(String nombre) {
+        computadora.setGpu(
+            factory.getGPUs().stream()
+                   .filter(g -> g.getDescripcion().contains(nombre))
+                   .findFirst().orElseThrow());
+    }
+
+    private void ram(String tamanio, int cantidad) {
+        RAM modulo = factory.getRAM().stream()
+                            .filter(r -> r.getDescripcion().contains(tamanio))
+                            .findFirst().orElseThrow();
+        for (int i = 0; i < cantidad; i++)
+            computadora.agregarRAM(modulo);
+    }
+
+    private void disco(String nombre) {
+        computadora.agregarDisco(
+            factory.getAlmacenamiento().stream()
+                   .filter(a -> a.getDescripcion().contains(nombre))
+                   .findFirst().orElseThrow());
+    }
+
+    private void fuente(String nombre) {
+        computadora.setFuente(
+            factory.getFuente().stream()
+                   .filter(f -> f.getDescripcion().contains(nombre))
+                   .findFirst().orElseThrow());
+    }
+
+    private void mb(String nombre) {
+        computadora.setMotherboard(
+            factory.getMotherboard().stream()
+                   .filter(m -> m.getDescripcion().contains(nombre))
+                   .findFirst().orElseThrow());
+    }
+
+    private void gab(String nombre) {
+        computadora.setGabinete(
+            factory.getGabinete().stream()
+                   .filter(g -> g.getDescripcion().contains(nombre))
+                   .findFirst().orElseThrow());
+    }
+
+    /* ------------- interface vacía (no‑op) ---------- */
+
+    @Override public void agregarCPU      (CPU c)               {}
+    @Override public void agregarRAM      (RAM r)               {}
+    @Override public void agregarGPU      (GPU g)               {}
+    @Override public void agregarDisco    (Almacenamiento d)    {}
+    @Override public void agregarFuente   (FuenteDePoder f)     {}
+    @Override public void agregarMotherboard(Motherboard m)     {}
+    @Override public void agregarGabinete (Gabinete g)          {}
 
     @Override
     public Computadora obtenerComputadora() {

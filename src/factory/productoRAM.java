@@ -1,28 +1,18 @@
+/* src/factory/RAMModulo.java */
 package src.factory;
 
+public final class ProductoRAM extends Componente implements RAM {
 
+    private final int capacidadGB;
 
-public class productoRAM extends Componente implements RAM {
-    private int tamanioDeMemoria;
-
-    public productoRAM (String nombre, double precio, String marca, String tipoComponente, int tamanioDeMemoria) {
-        // La marca se fija en "Intel"
-        super(nombre, precio, marca, "RAM");
-        this.tamanioDeMemoria = tamanioDeMemoria;
+    public ProductoRAM(String modelo, double precio, Marca marca, int capacidadGB) {
+        super(modelo, precio, marca, TipoComponente.RAM);
+        this.capacidadGB = capacidadGB;
     }
 
-    @Override
-    public String getDescripcion() {
-        return nombre + "de marca:" + marca + "con " + tamanioDeMemoria +"tamanio de memoria"  + " PRECIO:" + precio;
-    }
+    @Override public int getCapacidadGB() { return capacidadGB; }
 
-    public double getPrecio(){
-
-        return precio;
-    }
-
-    public int getTamanioDeMemoria(){
-
-        return tamanioDeMemoria;
+    @Override public String getDescripcion() {
+        return "%s | %d GB".formatted(super.toString(), capacidadGB);
     }
 }

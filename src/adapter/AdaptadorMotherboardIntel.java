@@ -1,22 +1,14 @@
+/* AdaptadorMotherboardIntel.java */
 package src.adapter;
 
 import src.factory.Motherboard;
 
-// Adapter para adaptar una GPUIntel para ser utilizada en el contexto de la fábrica AMD.
 public class AdaptadorMotherboardIntel implements Motherboard {
-    private Motherboard motherboardIntel; // Instancia de GPU que se desea adaptar.
 
-    public AdaptadorMotherboardIntel(Motherboard motherboardIntel) {
-        this.motherboardIntel = motherboardIntel;
-    }
+    private final Motherboard mb;
 
-    
+    public AdaptadorMotherboardIntel(Motherboard mb) { this.mb = mb; }
 
-    @Override
-    public String getDescripcion() {
-        // Se añade una etiqueta para indicar la adaptación.
-        return "[Adaptado para AMD] " + motherboardIntel.getDescripcion();
-    }
-
-    
+    @Override public String  getDescripcion() { return "[Adaptado] " + mb.getDescripcion(); }
+    @Override public double  getPrecio()      { return mb.getPrecio(); }
 }
