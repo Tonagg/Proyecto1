@@ -52,7 +52,7 @@ public interface ComponenteFactory {
      * @param potenciaW Potencia en vatios
      * @return Instancia de FuenteDePoder configurada
      */
-    FuenteDePoder fuente     (int potenciaW);
+    FuenteDePoder fuente     (String modeloClave);
 
     /**
      * Crea una unidad de estado solido (SSD).
