@@ -1,12 +1,21 @@
+// src/adapter/AdaptadorGPUNvidia.java
 package src.adapter;
 
+import src.factory.Componente;
 import src.factory.GPU;
+import src.factory.TipoComponente;
 
-public class AdaptadorGPUNvidia implements GPU {
-
+public class AdaptadorGPUNvidia extends Componente implements GPU {
     private final GPU gpuIntel;
 
     public AdaptadorGPUNvidia(GPU gpuIntel) {
+        super(
+          // extraemos los datos del gpu envuelto (que es Componente)
+          ((Componente)gpuIntel).getModelo(),
+          ((Componente)gpuIntel).getPrecio(),
+          ((Componente)gpuIntel).getMarca(),
+          TipoComponente.GPU
+        );
         this.gpuIntel = gpuIntel;
     }
 
@@ -17,12 +26,6 @@ public class AdaptadorGPUNvidia implements GPU {
 
     @Override
     public double getPrecio() {
-        return gpuIntel.getPrecio(); // 👈 esta línea resuelve el error
-    }
-
-    @Override
-    public String toString() {
-        return getDescripcion(); // opcional, más claro
+        return gpuIntel.getPrecio();
     }
 }
-

@@ -1,27 +1,24 @@
-/* src/adapter/AdaptadorMotherboardIntel.java */
+// src/adapter/AdaptadorMotherboardIntel.java
 package src.adapter;
 
+import src.factory.Componente;
 import src.factory.Motherboard;
+import src.factory.TipoComponente;
 
-/**
- * Adapter que permite usar una motherboard Intel
- * (chipset Z790/B760, etc.) con una CPU AMD.
- */
-public final class AdaptadorMotherboardIntel implements Motherboard {
-
+public final class AdaptadorMotherboardIntel extends Componente implements Motherboard {
     private final Motherboard mb;
 
     public AdaptadorMotherboardIntel(Motherboard mb) {
+        super(
+          ((Componente)mb).getModelo(),
+          ((Componente)mb).getPrecio(),
+          ((Componente)mb).getMarca(),
+          TipoComponente.MOTHERBOARD
+        );
         this.mb = mb;
     }
 
-    /* ——— delegaciones ——— */
-    @Override public String  getDescripcion() { return "[Adaptado] " + mb.getDescripcion(); }
-    @Override public double  getPrecio()      { return mb.getPrecio(); }
-    @Override public String  getChipset()     { return mb.getChipset(); }
-
-    @Override public String toString() {
-        return getDescripcion();
-    }
+    @Override public String getDescripcion() { return "[Adaptado] " + mb.getDescripcion(); }
+    @Override public double getPrecio()      { return mb.getPrecio(); }
+    @Override public String getChipset()     { return mb.getChipset(); }
 }
-
