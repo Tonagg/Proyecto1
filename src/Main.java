@@ -1,4 +1,3 @@
-/* ────── src/Main.java ────── */
 package src;
 
 import java.util.Scanner;
@@ -6,41 +5,58 @@ import java.util.Scanner;
 import src.factory.*;
 import src.mvc.*;
 
-/**
- * Punto de arranque de la aplicación.
- * <p>
- * ‑ Pregunta la plataforma (Intel+Nvidia o AMD)  
- * ‑ Inyecta la fábrica correspondiente en el <i>Model</i>  
- * ‑ Dispara el flujo MVC por consola
- * </p>
- */
 public final class Main {
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
-        /* ─── selección de plataforma ─── */
-        System.out.println("=== MONOSCHINOS MX ===");
-        System.out.println("Seleccione plataforma de componentes:");
-        System.out.println("  1) Intel + Nvidia");
-        System.out.println("  2) AMD");
-        System.out.print("Opción (1‑2): ");
+        while (true) {
+            // ─── Menú principal ───
+            System.out.println("=== MONOSCHINOS MX ===");
+            System.out.println("1) Nueva compra");
+            System.out.println("2) Consultar historial de tickets");
+            System.out.println("0) Salir");
+            System.out.print("Elige opción: ");
+            int mainOp = leerEntero(sc, 0, 2);
 
-        int opcion = leerEntero(sc, 1, 2);
+            if (mainOp == 0) {
+                System.out.println("¡Hasta luego!");
+                break;
+            }
 
-        ComponenteFactory factory =
-                (opcion == 2) ? new AmdFactory()
-                              : new IntelNvidiaFactory();
+            // Creamos un View genérico
+            View view = new View();
 
-        /* ─── arranque MVC ─── */
-        Model       model = new Model(factory);
-        View        view  = new View();
-        Controller  ctrl  = new Controller(model, view);
+            if (mainOp == 2) {
+                // Solo mostramos historial (no necesitamos fábrica real)
+                Model dummyModel = new Model(new IntelNvidiaFactory());
+                Controller ctrlHist = new Controller(dummyModel, view);
+                ctrlHist.mostrarHistorial();
+                continue;
+            }
 
-        ctrl.iniciar();
+            // ─── Nueva compra ───
+            // Preguntamos plataforma **solo si** se va a comprar
+            System.out.println("Seleccione plataforma de componentes:");
+            System.out.println("  1) Intel + Nvidia");
+            System.out.println("  2) AMD");
+            System.out.print("Opción (1‑2): ");
+            int plat = leerEntero(sc, 1, 2);
+
+            ComponenteFactory factory =
+                (plat == 2) ? new AmdFactory()
+                            : new IntelNvidiaFactory();
+
+            // Inyectamos la fábrica en el Modelo y arrancamos la compra
+            Model model = new Model(factory);
+            Controller ctrl = new Controller(model, view);
+            ctrl.realizarCompra();
+        }
+
+        sc.close();
     }
 
-    /* ---- helper robusto de lectura ---- */
+    // Reutilizamos tu helper
     private static int leerEntero(Scanner sc, int min, int max) {
         while (true) {
             try {

@@ -1,0 +1,31 @@
+========== TICKET ==========
+Fecha/hora: 2025‑04‑20 16:42
+---------------------------
+INTEL Core i3‑13100 – $1,750.00 | 4 nucleos
+NVIDIA GTX 1660 – $4,000.00 | memoria GDDR6
+ASUS TUF Gaming B760‑Plus WIFI D4 – $4,650.00 | chipset B760
+EVGA EVGA 800 W – $1,920.00 | 800 W
+YEYIAN Yeyian Lancer – $1,320.00
+KINGSTON Kingston 8 GB – $400.00 | 8 GB
+WD WD Blue 500 GB – $1,100.00 | 500 GB HDD
+
+---------------------------
+Precio total: $15,140.00
+===========================
+========== TICKET ==========
+Fecha/hora: 2025‑04‑20 16:48
+---------------------------
+AMD Ryzen 7 7700X – $7,043.00 | 8 nucleos
+[Adaptado a AMD] NVIDIA RTX 4080 – $43,630.00 | memoria GDDR6X
+[Adaptado] ASUS ROG Maximus Z790 Hero  – $12,110.00 | chipset Z790
+EVGA EVGA 1000 W – $4,010.00 | 1000 W
+NZXT NZXT H6 Flow – $2,180.00
+ADATA ADATA 32 GB – $990.00 | 32 GB
+ADATA ADATA 32 GB – $990.00 | 32 GB
+ADATA ADATA 32 GB – $990.00 | 32 GB
+ADATA ADATA 32 GB – $990.00 | 32 GB
+KINGSTON Kingston SSD 500 GB – $820.00 | 500 GB SSD
+
+---------------------------
+Precio total: $73,753.00
+===========================
