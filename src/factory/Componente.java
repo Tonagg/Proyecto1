@@ -2,9 +2,9 @@
 package src.factory;
 
 /**
- * Todos los productos de hardware heredan de esta clase inmutable.
- * Implementa un {@code toString()} genérico y deja a las sub‑clases
- * añadir detalles concretos en {@link #getDescripcion()}.
+ * Clase base abstracta e inmutable para representar componentes de hardware 
+ * en un sistema de ensamblado de computadoras. Proporciona atributos comunes 
+ * y metodos genericos para todas las subclases concretas.
  */
 public abstract class Componente {
     private final String modelo;
@@ -12,6 +12,15 @@ public abstract class Componente {
     private final Marca  marca;
     private final TipoComponente tipo;
 
+    /**
+     * Constructor protegido para inicializar los atributos base 
+     * del componente. Solo accesible por subclases.
+     * 
+     * @param modelo Identificador unico del componente
+     * @param precio Costo en moneda local.
+     * @param marca Fabricante del componente
+     * @param tipo Categoria funcional del componente
+     */
     protected Componente(String modelo,
                          double precio,
                          Marca  marca,
@@ -22,16 +31,57 @@ public abstract class Componente {
         this.tipo   = tipo;
     }
 
-    public double         getPrecio()  { return precio; }
-    public String         getModelo()  { return modelo; }
-    public Marca          getMarca()   { return marca;  }
-    public TipoComponente getTipo()    { return tipo;   }
+    /**
+     * Devuelve el precio del componente.
+     * 
+     * @return Valor numerico en moneda local
+     */
+    public double getPrecio() {
+         return precio; 
+    }
 
-    /** Descripción genérica “MARCA modelo – $precio”. */
+    /**
+     * Obtiene el modelo comercial del componente.
+     * 
+     * @return Cadena con el nombre del modelo
+     */
+    public String getModelo()  {
+         return modelo; 
+    }
+
+    /**
+     * Obtiene la marca fabricante del componente.
+     * 
+     * @return Instancia de la Marca
+     */
+    public Marca getMarca() {
+         return marca; 
+    }
+
+    /**
+     * Obtiene la categoria funcional del componente.
+     * 
+     * @return Instancia del TipoComponente
+     */
+    public TipoComponente getTipo() {
+         return tipo;   
+    }
+
+    /**
+     * Genera una representacion textual generica del componente 
+     * en formato: marca, modelo y precio.
+     * 
+     * @return Cadena formateada con informacion basica
+     */
     @Override public String toString() {
         return "%s %s – $%,.2f".formatted(marca, modelo, precio);
     }
 
-    /** Cada sub‑clase añade sus propios atributos. */
+    /**
+     * Metodo abstracto que debe ser implementado por subclases para 
+     * generar una descripcion tecnica detallada del componente.
+     *
+     * @return Descripción tecnica especifica del componente
+     */
     public abstract String getDescripcion();
 }
