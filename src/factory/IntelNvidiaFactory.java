@@ -60,7 +60,10 @@ public final class IntelNvidiaFactory implements ComponenteFactory {
         Map.entry(1500, new ProductoFuenteDePoder("EVGA 1500 W",  7_970, Marca.EVGA   , 1500)),
         Map.entry(800, new ProductoFuenteDePoder("Corsair 800 W",2_880, Marca.CORSAIR, 800)),
         Map.entry(1000, new ProductoFuenteDePoder("Corsair 1000 W",3_120, Marca.CORSAIR, 1000)), 
-        Map.entry(1500, new ProductoFuenteDePoder("Corsair 1500 W",8_600, Marca.CORSAIR,1500))
+        Map.entry(1500, new ProductoFuenteDePoder("Corsair 1500 W",8_600, Marca.CORSAIR,1500)), 
+        Map.entry(800, new ProductoFuenteDePoder("XPG 800 W",2_460, Marca.XPG, 800)), 
+        Map.entry(1000, new ProductoFuenteDePoder("XPG 1000 W",3_220, Marca.XPG, 1000)), 
+        Map.entry(1500, new ProductoFuenteDePoder("XPG 1500 W",3_480, Marca.XPG,1500))
     );
 
     /* --- Almacenamiento ---------------------------------------------------- */
