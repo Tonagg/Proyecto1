@@ -113,6 +113,8 @@ public class Controller {
                     case 0 -> { break; }
                     default -> { view.mostrarMensaje("Opción inválida."); continue; }
                 }
+                // Actualizamos el modelo con la PC ya decorada
+                model.setComputadoraActual(pc);
                 view.mostrarPcParcial(pc);
             } catch (IllegalStateException e) {
                 view.mostrarMensaje(e.getMessage());
@@ -120,6 +122,8 @@ public class Controller {
         }
 
         // —— Ticket final ——
+        // Aseguramos que el modelo tenga la PC completa (con software)
+        model.setComputadoraActual(pc);
         Ticket ticket = model.generarTicket("");
         view.mostrarTicket(ticket);
     }

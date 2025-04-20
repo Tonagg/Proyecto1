@@ -95,10 +95,10 @@ public class View {
         while (true) {
             System.out.println("""
                 Elija software:
-                 1) Windows 10/11
-                 2) Office 365
-                 3) Adobe Photoshop
-                 4) WSL Terminal (modo hacker)
+                 1) Windows 10/11      – $1,000.00
+                 2) Office 365         – $  500.00
+                 3) Adobe Photoshop    – $1,200.00
+                 4) WSL Terminal (modo hacker) – $1,000.00
                  0) Ninguno
                 """);
             System.out.print("Opción: ");
