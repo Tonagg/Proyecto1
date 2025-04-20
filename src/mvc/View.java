@@ -1,6 +1,5 @@
 package src.mvc;
 
-import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 import src.Ticket;
@@ -40,21 +39,38 @@ public class View {
     }
 
     /* ---------------- Compatibilidad ---------------- */
-    public boolean confirmarForzarCompat() {
-        System.out.print("¿Desea forzar compatibilidad con adaptadores? (s/n): ");
-        return sc.nextLine().trim().equalsIgnoreCase("s");
+    public void mostrarConflictos(List<String> conflictos) {
+        System.out.println("¡Se detectaron conflictos de compatibilidad!");
+        conflictos.forEach(c -> System.out.println(" - " + c));
+    }
+
+    public boolean confirmarAdaptacion() {
+        while (true) {
+            System.out.print("¿Desea aplicar adaptadores para resolverlos? (s/n): ");
+            String input = sc.nextLine().trim().toLowerCase();
+            if (input.equals("s")) return true;
+            if (input.equals("n")) return false;
+            System.out.println("Entrada inválida. Escribe 's' para sí o 'n' para no.");
+        }
+    }
+
+    public void mostrarNotasAdaptacion(String notas) {
+        if (notas != null && !notas.isBlank()) {
+            System.out.println("Adaptaciones realizadas:");
+            System.out.println(notas);
+        }
     }
 
     /* ---------------- Software / Decorators --------- */
     public boolean confirmarAgregarSoftware() {
-    while (true) {
-        System.out.print("¿Agregar software extra? (s/n): ");
-        String input = sc.nextLine().trim().toLowerCase();
-        if (input.equals("s")) return true;
-        if (input.equals("n")) return false;
-        System.out.println("Entrada inválida. Escribe 's' para sí o 'n' para no.");
+        while (true) {
+            System.out.print("¿Agregar software extra? (s/n): ");
+            String input = sc.nextLine().trim().toLowerCase();
+            if (input.equals("s")) return true;
+            if (input.equals("n")) return false;
+            System.out.println("Entrada inválida. Escribe 's' para sí o 'n' para no.");
+        }
     }
-}
 
     public int seleccionarSoftware() {
         while (true) {
@@ -76,42 +92,25 @@ public class View {
     }
 
     /* ---------------- Selección genérica de catálogo ---------------- */
-    /**
-     * Muestra un catálogo numerado y lee la opción elegida.
-     *
-     * @param <T>       Tipo de los elementos del catálogo (CPU, GPU, RAM, etc.)
-     * @param nombre    Nombre del tipo de elementos (p.ej. "CPU", "GPU", "RAM", ...)
-     * @param opciones  Lista de opciones a mostrar
-     * @return índice (1–opciones.size()) de la opción elegida
-     */
     public <T> int seleccionarDeCatalogo(String nombre, List<T> opciones) {
         System.out.println("Seleccione " + nombre + ":");
         for (int i = 0; i < opciones.size(); i++) {
             System.out.printf("  %2d) %s%n", i + 1, opciones.get(i).toString());
         }
 
-        int idx = -1;
         while (true) {
             System.out.printf("Opción (1–%d): ", opciones.size());
             try {
-                idx = Integer.parseInt(sc.nextLine().trim());
-                if (idx >= 1 && idx <= opciones.size()) break;
-                else System.out.println("Opción fuera de rango. Intenta de nuevo.");
+                int idx = Integer.parseInt(sc.nextLine().trim());
+                if (idx >= 1 && idx <= opciones.size()) return idx;
+                System.out.println("Opción fuera de rango. Intenta de nuevo.");
             } catch (NumberFormatException e) {
                 System.out.println("Entrada inválida. Intenta con un número.");
             }
         }
-        return idx;
     }
 
-    /**
-     * Pide al usuario cuántas unidades de un recurso desea (p.ej. módulos de RAM o discos),
-     * con un mínimo de 1 y un máximo especificado.
-     *
-     * @param nombre  Nombre de lo que se está preguntando ("módulos de RAM", "discos", ...)
-     * @param max     Cantidad máxima permitida
-     * @return número entre 1 y max
-     */
+    /* ---------------- Cantidad de recursos ---------------- */
     public int solicitarCantidad(String nombre, int max) {
         while (true) {
             System.out.printf("¿Cuántos %s desea? (1–%d): ", nombre, max);
@@ -131,14 +130,13 @@ public class View {
         System.out.println(msg);
     }
 
-    public void mostrarTicket(Ticket t) {
-        System.out.println(t.imprimir());
-    }
-
     public void mostrarPcParcial(Computadora pc) {
         System.out.println("--- Config actual ---");
         System.out.println(pc.getDescripcion());
         System.out.printf("Subtotal: $%.2f%n", pc.calcularPrecioTotal());
     }
-}
 
+    public void mostrarTicket(Ticket t) {
+        System.out.println(t.imprimir());
+    }
+}

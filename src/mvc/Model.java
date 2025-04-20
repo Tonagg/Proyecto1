@@ -3,13 +3,20 @@ package src.mvc;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import src.compatibilidad.*;
 import src.Computadora;
 import src.Ticket;
 import src.builder.ComputadoraDirector;
 import src.builder.ComputadoraPersonalizadaBuilder;
 import src.builder.ComputadoraPrearmadaBuilder;
-import src.factory.*;
+import src.factory.ComponenteFactory;
+import src.factory.RAM;
+import src.factory.CPU;
+import src.factory.GPU;
+import src.factory.Almacenamiento;
+import src.factory.FuenteDePoder;
+import src.factory.Motherboard;
+import src.factory.Gabinete;
+import src.compatibilidad.CompatibilidadManager;
 
 /**
  * Modelo de dominio: construye computadoras, verifica compatibilidad
@@ -20,11 +27,11 @@ public class Model {
 
     /* -------- dependencias inyectadas -------- */
     private final ComponenteFactory factory;
-    private VerificaCompatibilidad  verificador = new CompatibilidadFlexible(); // default
+    private final CompatibilidadManager compatManager = new CompatibilidadManager();
 
     /* -------- builder/director internos ------ */
     private ComputadoraDirector director;
-    private Computadora          computadoraActual;   // la PC que se está armando
+    private Computadora          computadoraActual;
 
     public Model(ComponenteFactory factory) {
         this.factory = factory;
@@ -46,7 +53,6 @@ public class Model {
 
     /* ----------------------------------------------------------
        Construcción de PC personalizada (Builder + Director)
-       En su versión “todo de golpe” (puedes seguir usándola si lo deseas).
        ---------------------------------------------------------- */
     public Computadora crearComputadoraPersonalizada() {
         ComputadoraPersonalizadaBuilder builder = new ComputadoraPersonalizadaBuilder();
@@ -55,7 +61,9 @@ public class Model {
         CPU cpu = factory.catalogoCPU().stream().findFirst().orElseThrow();
         List<RAM> rams = factory.catalogoRAM().stream().limit(2).collect(Collectors.toList());
         GPU gpu = factory.catalogoGPU().stream().findFirst().orElseThrow();
-        List<Almacenamiento> discos = List.of(factory.catalogoStorage().stream().findFirst().orElseThrow());
+        List<Almacenamiento> discos = List.of(
+            factory.catalogoStorage().stream().findFirst().orElseThrow()
+        );
         FuenteDePoder fuente = factory.catalogoPSU().stream().findFirst().orElseThrow();
         Motherboard mb = factory.catalogoMotherboard().stream().findFirst().orElseThrow();
         Gabinete gab = factory.catalogoGabinetes().stream().findFirst().orElseThrow();
@@ -69,28 +77,29 @@ public class Model {
        Construcción de PC pre‑armada (Builder específico)
        ---------------------------------------------------------- */
     public Computadora crearComputadoraPrearmada(String modelo) {
-        ComputadoraPrearmadaBuilder builder = new ComputadoraPrearmadaBuilder(factory, modelo);
+        ComputadoraPrearmadaBuilder builder = 
+            new ComputadoraPrearmadaBuilder(factory, modelo);
         computadoraActual = builder.obtenerComputadora();
         return computadoraActual;
     }
 
     /* ---------------- compatibilidad ---------------- */
-    public boolean esCompatible() {
-        return verificador.esCompatible(computadoraActual);
+    /**
+     * Devuelve la lista de conflictos actuales.
+     */
+    public List<String> verificarCompatibilidad() {
+        return compatManager.verificar(computadoraActual);
     }
 
-    /** Aplica adaptadores y devuelve notas. */
+    /**
+     * Aplica adaptaciones automáticamente y devuelve notas.
+     */
     public String adaptar() {
-        return verificador.adaptar(computadoraActual);
+        return compatManager.adaptar(computadoraActual);
     }
 
     /* ---------------- ticket ---------------- */
     public Ticket generarTicket(String notas) {
         return new Ticket(computadoraActual, notas);
-    }
-
-    /* ---------------- setters opcionales -------------- */
-    public void setVerificador(VerificaCompatibilidad v) {
-        this.verificador = v;
     }
 }

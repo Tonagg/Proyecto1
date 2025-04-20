@@ -1,48 +1,43 @@
-/* src/Main.java */
 package src;
 
+import java.util.Scanner;
 import src.factory.*;
 import src.mvc.*;
 import src.compatibilidad.*;
 
-/**
- * Punto de entrada de la aplicación.
- * <pre>
- *   java -jar app.jar [--amd|--intel] [--estricto|--flex]
- * </pre>
- */
 public final class Main {
 
     public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
 
-        /* ---------- Fábrica de componentes ---------- */
-        ComponenteFactory factory = parseFactory(args);
-        Model model              = new Model(factory);
+        // 1) Elegir fábrica de componentes
+        System.out.println("=== MONOSCHINOS MX ===");
+        System.out.println("Seleccione tipo de componentes:");
+        System.out.println("  1) Intel + Nvidia");
+        System.out.println("  2) AMD");
+        System.out.print("Opción (1-2): ");
+        int fabChoice = sc.nextInt();
 
-        /* ---------- Estrategia de compatibilidad ----- */
-        if (hasArg(args, "--estricto")) {
+        ComponenteFactory factory = (fabChoice == 2)
+            ? new AmdFactory()
+            : new IntelNvidiaFactory();
+
+        // 2) Elegir modo de compatibilidad
+        System.out.println("Modo de compatibilidad:");
+        System.out.println("  1) Estricto (sin adaptaciones)");
+        System.out.println("  2) Flexible (con adaptadores)");
+        System.out.print("Opción (1-2): ");
+        int compChoice = sc.nextInt();
+
+        Model model = new Model(factory);
+        if (compChoice == 1) {
             model.setVerificador(new CompatibilidadEstricta());
-        } else if (hasArg(args, "--flex")) {           // explícito, aunque es el default
+        } else {
             model.setVerificador(new CompatibilidadFlexible());
         }
 
-        /* ---------- Despega el MVC ------------------ */
+        // 3) Arrancar MVC
         View view = new View();
         new Controller(model, view).iniciar();
-    }
-
-    /* ===== helpers internos ===== */
-
-    /** Devuelve la fábrica pedida por línea de comandos (Intel por defecto). */
-    private static ComponenteFactory parseFactory(String[] args) {
-        if (hasArg(args, "--amd"))   return new AmdFactory();
-        if (hasArg(args, "--intel")) return new IntelNvidiaFactory();
-        return new IntelNvidiaFactory();               // default
-    }
-
-    /** @return {@code true} si {@code flag} aparece en los argumentos. */
-    private static boolean hasArg(String[] args, String flag) {
-        for (String a : args) if (a.equalsIgnoreCase(flag)) return true;
-        return false;
     }
 }
