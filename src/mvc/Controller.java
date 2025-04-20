@@ -3,14 +3,14 @@ package src.mvc;
 import java.util.ArrayList;
 import java.util.List;
 
-import src.*;
+import src.Computadora;
+import src.Ticket;
 import src.builder.ComputadoraDirector;
 import src.builder.ComputadoraPersonalizadaBuilder;
 import src.builder.ComputadoraPrearmadaBuilder;
+import src.compatibilidad.CompatibilidadManager;
 import src.factory.*;
 import src.decorator.*;
-import src.compatibilidad.VerificaCompatibilidad;
-import src.Ticket;
 
 /**
  * Controlador del patrón MVC. Orquesta la interacción
@@ -20,6 +20,7 @@ public class Controller {
 
     private final Model model;
     private final View  view;
+    private final CompatibilidadManager compatManager = new CompatibilidadManager();
 
     public Controller(Model m, View v) {
         this.model = m;
@@ -41,15 +42,13 @@ public class Controller {
             List<CPU> cpus = new ArrayList<>(factory.catalogoCPU());
             CPU cpu = cpus.get(view.seleccionarDeCatalogo("CPU", cpus) - 1);
             builder.agregarCPU(cpu);
-            model.setComputadoraActual(builder.obtenerComputadora());
-            checarCompatibilidad("CPU");
+            pc = finalizeStep(builder);
 
             // 2) GPU
             List<GPU> gpus = new ArrayList<>(factory.catalogoGPU());
             GPU gpu = gpus.get(view.seleccionarDeCatalogo("GPU", gpus) - 1);
             builder.agregarGPU(gpu);
-            model.setComputadoraActual(builder.obtenerComputadora());
-            checarCompatibilidad("GPU");
+            pc = finalizeStep(builder);
 
             // 3) RAM (hasta 4 módulos)
             List<RAM> rams = new ArrayList<>(factory.catalogoRAM());
@@ -58,7 +57,7 @@ public class Controller {
                 RAM ram = rams.get(view.seleccionarDeCatalogo("RAM", rams) - 1);
                 builder.agregarRAM(ram);
             }
-            model.setComputadoraActual(builder.obtenerComputadora());
+            pc = finalizeStep(builder);
 
             // 4) Almacenamiento (1–4 discos)
             List<Almacenamiento> discos = new ArrayList<>(factory.catalogoStorage());
@@ -67,47 +66,31 @@ public class Controller {
                 Almacenamiento d = discos.get(view.seleccionarDeCatalogo("disco", discos) - 1);
                 builder.agregarDisco(d);
             }
-            model.setComputadoraActual(builder.obtenerComputadora());
+            pc = finalizeStep(builder);
 
             // 5) Fuente de poder
             List<FuenteDePoder> psus = new ArrayList<>(factory.catalogoPSU());
             FuenteDePoder psu = psus.get(view.seleccionarDeCatalogo("Fuente de Poder", psus) - 1);
             builder.agregarFuente(psu);
-            model.setComputadoraActual(builder.obtenerComputadora());
-            checarCompatibilidad("Fuente de Poder");
+            pc = finalizeStep(builder);
 
             // 6) Motherboard
             List<Motherboard> mbs = new ArrayList<>(factory.catalogoMotherboard());
             Motherboard mb = mbs.get(view.seleccionarDeCatalogo("Motherboard", mbs) - 1);
             builder.agregarMotherboard(mb);
-            model.setComputadoraActual(builder.obtenerComputadora());
-            checarCompatibilidad("Motherboard");
+            pc = finalizeStep(builder);
 
             // 7) Gabinete
             List<Gabinete> gabinetes = new ArrayList<>(factory.catalogoGabinetes());
             Gabinete gabinete = gabinetes.get(view.seleccionarDeCatalogo("Gabinete", gabinetes) - 1);
             builder.agregarGabinete(gabinete);
-            model.setComputadoraActual(builder.obtenerComputadora());
-            checarCompatibilidad("Gabinete");
-
-            pc = builder.obtenerComputadora();
+            pc = finalizeStep(builder);
 
         } else {
             // —— PRE‑ARMADA CLÁSICA ——
             String mod = view.solicitarModeloPrearmada();
             pc = model.crearComputadoraPrearmada(mod);
-
-            if (!model.esCompatible()) {
-                view.mostrarConflictos(((src.compatibilidad.CompatibilidadBase)model.verificador)
-                    .conflictos(model.getComputadoraActual()));
-                if (view.confirmarAdaptacion()) {
-                    String notas = model.adaptar();
-                    view.mostrarNotasAdaptacion(notas);
-                } else {
-                    view.mostrarMensaje("Compra cancelada.");
-                    return;
-                }
-            }
+            checarCompatibilidad(pc, "configuración prearmada");
         }
 
         // —— Software adicional (Decorators) ——
@@ -134,17 +117,25 @@ public class Controller {
     }
 
     /**
-     * Revisa compatibilidad y, de haber conflictos,
-     * muestra, pregunta adaptación y aplica si el usuario acepta.
+     * Finaliza cada paso de armado: guarda PC en el modelo y chequea compatibilidad.
      */
-    private void checarCompatibilidad(String etapa) {
-        if (!model.esCompatible()) {
-            // obtener lista de conflictos
-            var conflictos = ((src.compatibilidad.CompatibilidadBase)model.verificador)
-                .conflictos(model.getComputadoraActual());
+    private Computadora finalizeStep(ComputadoraPersonalizadaBuilder builder) {
+        Computadora pc = builder.obtenerComputadora();
+        model.setComputadoraActual(pc);
+        checarCompatibilidad(pc, "");/* etapa genérica */;
+        return pc;
+    }
+
+    /**
+     * Revisa compatibilidad según reglas, muestra conflictos,
+     * pregunta adaptación y aplica si el usuario acepta.
+     */
+    private void checarCompatibilidad(Computadora pc, String etapa) {
+        List<String> conflictos = compatManager.verificar(pc);
+        if (!conflictos.isEmpty()) {
             view.mostrarConflictos(conflictos);
             if (view.confirmarAdaptacion()) {
-                String notas = model.adaptar();
+                String notas = compatManager.adaptar(pc);
                 view.mostrarNotasAdaptacion(notas);
             } else {
                 view.mostrarMensaje("Proceso cancelado en etapa: " + etapa);
