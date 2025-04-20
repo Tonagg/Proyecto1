@@ -2,8 +2,6 @@
 package src.mvc;
 
 import java.util.List;
-import java.util.stream.Collectors;
-
 import src.Computadora;
 import src.Ticket;
 import src.builder.*;

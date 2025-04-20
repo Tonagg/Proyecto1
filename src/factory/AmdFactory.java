@@ -24,7 +24,7 @@ public final class AmdFactory implements ComponenteFactory {
         return new AdaptadorMotherboardIntel(intel.motherboard(m));
     }
     @Override public RAM ram(int gb, Marca marca) { return intel.ram(gb, marca); }
-    @Override public FuenteDePoder fuente(int w)  { return intel.fuente(w);      }
+    @Override public FuenteDePoder fuente(String modeloClave) { return intel.fuente(modeloClave);}
     @Override public Almacenamiento ssd(int gb)   { return intel.ssd(gb);        }
     @Override public Almacenamiento hdd(int gb)   { return intel.hdd(gb);        }
     @Override public Gabinete gabinete(String m)  { return intel.gabinete(m);    }

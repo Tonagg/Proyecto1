@@ -46,7 +46,7 @@ public class ComputadoraPrearmadaBuilder implements ComputadoraBuilder {
         addRam(32, 4, Marca.ADATA);
         pc.setGpu(factory.gpu("RTX 4080"));
         pc.agregarDisco(factory.ssd(500));
-        pc.setFuente(factory.fuente(1000));
+        pc.setFuente(factory.fuente("EVGA1000"));
         pc.setMotherboard(factory.motherboard("ROG Maximus Z790 Hero"));
         pc.setGabinete(factory.gabinete("NZXT H6 Flow"));
     }
@@ -56,7 +56,7 @@ public class ComputadoraPrearmadaBuilder implements ComputadoraBuilder {
         addRam(8, 1, Marca.KINGSTON);
         pc.setGpu(factory.gpu("GTX 1660"));
         pc.agregarDisco(factory.hdd(500));
-        pc.setFuente(factory.fuente(800));
+        pc.setFuente(factory.fuente("EVGA800"));
         pc.setMotherboard(factory.motherboard("TUF Gaming B760‑Plus WIFI D4"));
         pc.setGabinete(factory.gabinete("Yeyian Lancer"));
     }
@@ -66,7 +66,7 @@ public class ComputadoraPrearmadaBuilder implements ComputadoraBuilder {
         addRam(16, 2, Marca.ADATA);
         pc.setGpu(factory.gpu("RTX 3060"));
         pc.agregarDisco(factory.ssd(1000));
-        pc.setFuente(factory.fuente(1500));
+        pc.setFuente(factory.fuente("EVGA1500"));
         pc.setMotherboard(factory.motherboard("MEG Z790 Godlike"));
         pc.setGabinete(factory.gabinete("NZXT H6 Flow"));
     }

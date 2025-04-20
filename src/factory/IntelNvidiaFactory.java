@@ -54,16 +54,18 @@ public final class IntelNvidiaFactory implements ComponenteFactory {
     );
 
     /* --- Fuentes de poder (EVGA / Corsair) --------------------------------- */
-    private static final Map<Integer, FuenteDePoder> PSU_MAP = Map.ofEntries(
-        Map.entry( 800, new ProductoFuenteDePoder("EVGA 800 W",   1_920, Marca.EVGA   ,  800)),
-        Map.entry(1000, new ProductoFuenteDePoder("EVGA 1000 W",  4_010, Marca.EVGA   , 1000)),
-        Map.entry(1500, new ProductoFuenteDePoder("EVGA 1500 W",  7_970, Marca.EVGA   , 1500)),
-        Map.entry(800, new ProductoFuenteDePoder("Corsair 800 W",2_880, Marca.CORSAIR, 800)),
-        Map.entry(1000, new ProductoFuenteDePoder("Corsair 1000 W",3_120, Marca.CORSAIR, 1000)), 
-        Map.entry(1500, new ProductoFuenteDePoder("Corsair 1500 W",8_600, Marca.CORSAIR,1500)), 
-        Map.entry(800, new ProductoFuenteDePoder("XPG 800 W",2_460, Marca.XPG, 800)), 
-        Map.entry(1000, new ProductoFuenteDePoder("XPG 1000 W",3_220, Marca.XPG, 1000)), 
-        Map.entry(1500, new ProductoFuenteDePoder("XPG 1500 W",3_480, Marca.XPG,1500))
+    private static final Map<String, FuenteDePoder> PSU_MAP = Map.ofEntries(
+        Map.entry("EVGA800",    new ProductoFuenteDePoder("EVGA 800 W",    1_920, Marca.EVGA   ,  800)),
+        Map.entry("EVGA1000",   new ProductoFuenteDePoder("EVGA 1000 W",   4_010, Marca.EVGA   , 1000)),
+        Map.entry("EVGA1500",   new ProductoFuenteDePoder("EVGA 1500 W",   7_970, Marca.EVGA   , 1500)),
+    
+        Map.entry("CORSAIR800",  new ProductoFuenteDePoder("Corsair 800 W", 2_880, Marca.CORSAIR,  800)),
+        Map.entry("CORSAIR1000", new ProductoFuenteDePoder("Corsair 1000 W",3_120, Marca.CORSAIR, 1000)),
+        Map.entry("CORSAIR1500", new ProductoFuenteDePoder("Corsair 1500 W",8_600, Marca.CORSAIR, 1500)),
+    
+        Map.entry("XPG800",     new ProductoFuenteDePoder("XPG 800 W",     2_460, Marca.XPG    ,  800)),
+        Map.entry("XPG1000",    new ProductoFuenteDePoder("XPG 1000 W",    3_220, Marca.XPG    , 1000)),
+        Map.entry("XPG1500",    new ProductoFuenteDePoder("XPG 1500 W",    3_480, Marca.XPG    , 1500))
     );
 
     /* --- Almacenamiento ---------------------------------------------------- */
@@ -92,7 +94,7 @@ public final class IntelNvidiaFactory implements ComponenteFactory {
     @Override public CPU          cpu(String modelo)            { return get(CPU_MAP , modelo); }
     @Override public GPU          gpu(String modelo)            { return get(GPU_MAP , modelo); }
     @Override public Motherboard  motherboard(String modelo)    { return get(MB_MAP  , modelo); }
-    @Override public FuenteDePoder fuente(int w)                { return get(PSU_MAP , w);      }
+    @Override public FuenteDePoder fuente(String modeloClave)   {return get(PSU_MAP, modeloClave.toUpperCase());}
 
     @Override public RAM ram(int gb, Marca marca) {
         String key = (marca == Marca.ADATA ? "ADATA‑" : "KING‑") + gb;
