@@ -130,6 +130,28 @@ public class View {
         }
     }
 
+        /**
+     * Muestra todos los modelos pre‑armados con su descripción y precio,
+     * y devuelve la opción elegida (1–n).
+     */
+    public int seleccionarPrearmada(List<String> nombres, List<Computadora> pcs) {
+        System.out.println("Modelos pre‑armados disponibles:");
+        for (int i = 0; i < nombres.size(); i++) {
+            System.out.printf(" %2d) %s%n", i+1, nombres.get(i));
+            System.out.println(pcs.get(i).getDescripcion().indent(4));
+            System.out.printf("     Precio: $%,.2f%n%n", pcs.get(i).calcularPrecioTotal());
+        }
+        while (true) {
+            System.out.printf("Elige modelo (1–%d): ", nombres.size());
+            try {
+                int idx = Integer.parseInt(sc.nextLine().trim());
+                if (idx >= 1 && idx <= nombres.size()) return idx;
+            } catch (NumberFormatException ignored) {}
+            System.out.println("Entrada inválida. Intenta nuevamente.\n");
+        }
+    }
+
+
     /* ────────────  Solicitud de cantidades (RAM, discos, …)  ──────────── */
 
     public int solicitarCantidad(String nombre, int max) {

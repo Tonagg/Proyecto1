@@ -9,7 +9,7 @@ import src.builder.ComputadoraDirector;
 import src.builder.ComputadoraPersonalizadaBuilder;
 import src.builder.ComputadoraPrearmadaBuilder;
 import src.compatibilidad.CompatibilidadManager;
-import src.factory.*;
+import src.factory.ComponenteFactory;
 import src.decorator.*;
 
 /**
@@ -39,57 +39,65 @@ public class Controller {
             ComputadoraDirector director = new ComputadoraDirector(builder);
 
             // 1) CPU
-            List<CPU> cpus = new ArrayList<>(factory.catalogoCPU());
-            CPU cpu = cpus.get(view.seleccionarDeCatalogo("CPU", cpus) - 1);
+            List<src.factory.CPU> cpus = new ArrayList<>(factory.catalogoCPU());
+            src.factory.CPU cpu = cpus.get(view.seleccionarDeCatalogo("CPU", cpus) - 1);
             builder.agregarCPU(cpu);
             pc = finalizeStep(builder);
 
             // 2) GPU
-            List<GPU> gpus = new ArrayList<>(factory.catalogoGPU());
-            GPU gpu = gpus.get(view.seleccionarDeCatalogo("GPU", gpus) - 1);
+            List<src.factory.GPU> gpus = new ArrayList<>(factory.catalogoGPU());
+            src.factory.GPU gpu = gpus.get(view.seleccionarDeCatalogo("GPU", gpus) - 1);
             builder.agregarGPU(gpu);
             pc = finalizeStep(builder);
 
             // 3) RAM (hasta 4 módulos)
-            List<RAM> rams = new ArrayList<>(factory.catalogoRAM());
+            List<src.factory.RAM> rams = new ArrayList<>(factory.catalogoRAM());
             int nRam = view.solicitarCantidad("módulos de RAM", 4);
             for (int i = 0; i < nRam; i++) {
-                RAM ram = rams.get(view.seleccionarDeCatalogo("RAM", rams) - 1);
+                src.factory.RAM ram = rams.get(view.seleccionarDeCatalogo("RAM", rams) - 1);
                 builder.agregarRAM(ram);
             }
             pc = finalizeStep(builder);
 
             // 4) Almacenamiento (1–4 discos)
-            List<Almacenamiento> discos = new ArrayList<>(factory.catalogoStorage());
+            List<src.factory.Almacenamiento> discos = new ArrayList<>(factory.catalogoStorage());
             int nDisk = view.solicitarCantidad("discos (HDD/SSD)", 4);
             for (int i = 0; i < nDisk; i++) {
-                Almacenamiento d = discos.get(view.seleccionarDeCatalogo("disco", discos) - 1);
+                src.factory.Almacenamiento d = discos.get(view.seleccionarDeCatalogo("disco", discos) - 1);
                 builder.agregarDisco(d);
             }
             pc = finalizeStep(builder);
 
             // 5) Fuente de poder
-            List<FuenteDePoder> psus = new ArrayList<>(factory.catalogoPSU());
-            FuenteDePoder psu = psus.get(view.seleccionarDeCatalogo("Fuente de Poder", psus) - 1);
+            List<src.factory.FuenteDePoder> psus = new ArrayList<>(factory.catalogoPSU());
+            src.factory.FuenteDePoder psu = psus.get(view.seleccionarDeCatalogo("Fuente de Poder", psus) - 1);
             builder.agregarFuente(psu);
             pc = finalizeStep(builder);
 
             // 6) Motherboard
-            List<Motherboard> mbs = new ArrayList<>(factory.catalogoMotherboard());
-            Motherboard mb = mbs.get(view.seleccionarDeCatalogo("Motherboard", mbs) - 1);
+            List<src.factory.Motherboard> mbs = new ArrayList<>(factory.catalogoMotherboard());
+            src.factory.Motherboard mb = mbs.get(view.seleccionarDeCatalogo("Motherboard", mbs) - 1);
             builder.agregarMotherboard(mb);
             pc = finalizeStep(builder);
 
             // 7) Gabinete
-            List<Gabinete> gabinetes = new ArrayList<>(factory.catalogoGabinetes());
-            Gabinete gabinete = gabinetes.get(view.seleccionarDeCatalogo("Gabinete", gabinetes) - 1);
+            List<src.factory.Gabinete> gabinetes = new ArrayList<>(factory.catalogoGabinetes());
+            src.factory.Gabinete gabinete = gabinetes.get(view.seleccionarDeCatalogo("Gabinete", gabinetes) - 1);
             builder.agregarGabinete(gabinete);
             pc = finalizeStep(builder);
 
         } else {
             // —— PRE‑ARMADA CLÁSICA ——
-            String mod = view.solicitarModeloPrearmada();
-            pc = model.crearComputadoraPrearmada(mod);
+            List<String> modelos = List.of("Gamer", "Basica", "Estudio", "Oficina", "Render");
+            List<Computadora> presets = new ArrayList<>();
+            for (String m : modelos) {
+                presets.add(new ComputadoraPrearmadaBuilder(factory, m).obtenerComputadora());
+            }
+
+            int elegido = view.seleccionarPrearmada(modelos, presets);
+            String modeloSel = modelos.get(elegido - 1);
+
+            pc = model.crearComputadoraPrearmada(modeloSel);
             checarCompatibilidad(pc, "configuración prearmada");
         }
 
@@ -122,7 +130,7 @@ public class Controller {
     private Computadora finalizeStep(ComputadoraPersonalizadaBuilder builder) {
         Computadora pc = builder.obtenerComputadora();
         model.setComputadoraActual(pc);
-        checarCompatibilidad(pc, "");/* etapa genérica */;
+        checarCompatibilidad(pc, "");
         return pc;
     }
 
