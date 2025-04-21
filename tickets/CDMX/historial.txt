@@ -1,0 +1,17 @@
+========== TICKET ==========
+Fecha/hora: 2025‑04‑20 20:33
+---------------------------
+AMD Ryzen 7 7700X – $7,043.00 | 8 nucleos
+[Adaptado a AMD] NVIDIA RTX 4080 – $43,630.00 | memoria GDDR6X
+[Adaptado] ASUS ROG Maximus Z790 Hero  – $12,110.00 | chipset Z790
+EVGA EVGA 1000 W – $4,010.00 | 1000 W
+NZXT NZXT H6 Flow – $2,180.00
+ADATA ADATA 32 GB – $990.00 | 32 GB
+ADATA ADATA 32 GB – $990.00 | 32 GB
+ADATA ADATA 32 GB – $990.00 | 32 GB
+ADATA ADATA 32 GB – $990.00 | 32 GB
+KINGSTON Kingston SSD 500 GB – $820.00 | 500 GB SSD
+
+---------------------------
+Precio total: $73,753.00
+===========================

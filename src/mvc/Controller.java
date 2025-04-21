@@ -1,38 +1,60 @@
 package src.mvc;
 
-import java.io.IOException;
-import java.nio.file.*;
-import java.util.*;
-
+import src.Sucursal;
 import src.Computadora;
 import src.Ticket;
-import src.builder.*;
+import src.builder.ComputadoraPersonalizadaBuilder;
+import src.builder.ComputadoraPrearmadaBuilder;
 import src.compatibilidad.CompatibilidadManager;
-import src.factory.*;
-import src.decorator.*;
+import src.factory.ComponenteFactory;
+import src.factory.CPU;
+import src.factory.GPU;
+import src.factory.RAM;
+import src.factory.Almacenamiento;
+import src.factory.FuenteDePoder;
+import src.factory.Motherboard;
+import src.factory.Gabinete;
+import src.decorator.AutocadDecorator;
+import src.decorator.OfficeDecorator;
+import src.decorator.PhotoshopDecorator;
+import src.decorator.WindowsDecorator;
+import src.decorator.WSLDecorator;
+
+import java.io.IOException;
+import java.nio.file.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Controlador del patrón MVC, ahora con dos puntos de entrada:
+ * Controlador del patrón MVC, con soporte para múltiples sucursales.
  *  - realizarCompra(): todo el flujo de armado + software + ticket
- *  - mostrarHistorial(): lectura del .txt de tickets
+ *  - mostrarHistorial(): lectura del .txt de tickets de la sucursal
  */
 public class Controller {
 
     private static final String DIR  = "tickets";
     private static final String FILE = "historial.txt";
 
-    private Model model;
-    private View  view;
+    private final Model model;
+    private final View  view;
+    private final Sucursal sucursal;
     private final CompatibilidadManager compat = new CompatibilidadManager();
 
-    public Controller(Model m, View v) {
-        this.model = m;
-        this.view  = v;
+    /**
+     * @param m Modelo inyectado
+     * @param v Vista inyectada
+     * @param sucursal Sucursal de origen
+     */
+    public Controller(Model m, View v, Sucursal sucursal) {
+        this.model     = m;
+        this.view      = v;
+        this.sucursal  = sucursal;
         ensureFile();
     }
 
     /** Flujo completo de nueva compra */
     public void realizarCompra() {
+        view.mostrarMensaje("Sucursal: " + sucursal);
         Computadora pc;
         ComponenteFactory f = model.getFactory();
 
@@ -54,7 +76,7 @@ public class Controller {
                     case 3 -> pc = new PhotoshopDecorator(pc);
                     case 4 -> pc = new WSLDecorator(pc);
                     case 5 -> pc = new AutocadDecorator(pc);
-                    case 0 -> {break;}
+                    case 0 -> { break; }
                     default -> { view.mostrarMensaje("Opción inválida."); continue; }
                 }
                 model.setComputadoraActual(pc);
@@ -71,14 +93,15 @@ public class Controller {
         appendTicket(t);
     }
 
-    /** Muestra en consola todo el historial de tickets */
+    /** Muestra en consola todo el historial de tickets de la sucursal */
     public void mostrarHistorial() {
-        Path path = Paths.get(DIR, FILE);
-        view.mostrarMensaje("=== Historial de Tickets ===");
+        Path dir  = Paths.get(DIR, sucursal.name());
+        Path file = dir.resolve(FILE);
+        view.mostrarMensaje("=== Historial de Tickets (" + sucursal + ") ===");
         try {
-            List<String> lines = Files.readAllLines(path);
+            List<String> lines = Files.readAllLines(file);
             if (lines.isEmpty()) {
-                view.mostrarMensaje("No hay tickets en el historial.");
+                view.mostrarMensaje("No hay tickets en el historial de " + sucursal + ".");
             } else {
                 lines.forEach(view::mostrarMensaje);
             }
@@ -139,18 +162,18 @@ public class Controller {
         List<String> modelos = List.of("Gamer","Basica","Estudio","Oficina","Render");
         List<Computadora> presets = new ArrayList<>();
         for (String m : modelos) {
-            presets.add(new ComputadoraPrearmadaBuilder(f,m).obtenerComputadora());
+            presets.add(new ComputadoraPrearmadaBuilder(f, m).obtenerComputadora());
         }
         int idx = view.seleccionarPrearmada(modelos, presets);
-        Computadora pc = model.crearComputadoraPrearmada(modelos.get(idx-1));
-        checkCompat(pc,"pre‑armada");
+        Computadora pc = model.crearComputadoraPrearmada(modelos.get(idx - 1));
+        checkCompat(pc, "pre‑armada");
         return pc;
     }
 
     private Computadora finalize(ComputadoraPersonalizadaBuilder b) {
         Computadora pc = b.obtenerComputadora();
         model.setComputadoraActual(pc);
-        checkCompat(pc,"paso");
+        checkCompat(pc, "paso");
         return pc;
     }
 
@@ -162,7 +185,7 @@ public class Controller {
                 String notas = compat.adaptar(pc);
                 view.mostrarNotasAdaptacion(notas);
             } else {
-                view.mostrarMensaje("Cancelado en etapa: "+etapa);
+                view.mostrarMensaje("Cancelado en etapa: " + etapa);
                 System.exit(0);
             }
         }
@@ -170,21 +193,21 @@ public class Controller {
 
     private void ensureFile() {
         try {
-            Path dir  = Paths.get(DIR);
+            Path dir  = Paths.get(DIR, sucursal.name());
             Path file = dir.resolve(FILE);
-            if (!Files.exists(dir))  Files.createDirectories(dir);
-            if (!Files.exists(file)) Files.createFile(file);
+            if (!Files.exists(dir))   Files.createDirectories(dir);
+            if (!Files.exists(file))  Files.createFile(file);
         } catch (IOException e) {
-            view.mostrarMensaje("No se pudo inicializar historial: "+e.getMessage());
+            view.mostrarMensaje("No se pudo inicializar historial: " + e.getMessage());
         }
     }
 
     private void appendTicket(Ticket t) {
         try {
-            Path path = Paths.get(DIR, FILE);
+            Path path = Paths.get(DIR, sucursal.name(), FILE);
             Files.writeString(path, t.imprimir(), StandardOpenOption.APPEND);
         } catch (IOException e) {
-            view.mostrarMensaje("Error al guardar ticket: "+e.getMessage());
+            view.mostrarMensaje("Error al guardar ticket: " + e.getMessage());
         }
     }
 }
