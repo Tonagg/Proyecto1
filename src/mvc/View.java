@@ -99,12 +99,13 @@ public class View {
                  2) Office 365         – $  500.00
                  3) Adobe Photoshop    – $1,200.00
                  4) WSL Terminal (modo hacker) – $1,000.00
+                 5) Autocad – $1,500.00
                  0) Ninguno
                 """);
             System.out.print("Opción: ");
             try {
                 int op = Integer.parseInt(sc.nextLine().trim());
-                if (op >= 0 && op <= 4) return op;
+                if (op >= 0 && op <= 5) return op;
             } catch (NumberFormatException ignored) {}
             System.out.println("Entrada inválida. Intenta nuevamente.\n");
         }

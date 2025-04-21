@@ -53,6 +53,7 @@ public class Controller {
                     case 2 -> pc = new OfficeDecorator(pc);
                     case 3 -> pc = new PhotoshopDecorator(pc);
                     case 4 -> pc = new WSLDecorator(pc);
+                    case 5 -> pc = new AutocadDecorator(pc);
                     case 0 -> {break;}
                     default -> { view.mostrarMensaje("Opción inválida."); continue; }
                 }
