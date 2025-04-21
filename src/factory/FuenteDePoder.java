@@ -1,4 +1,3 @@
-/* src/factory/FuenteDePoder.java */  
 package src.factory; 
 /**
  * Interfaz que representa una fuente de poder (PSU) en el sistema de componentes.

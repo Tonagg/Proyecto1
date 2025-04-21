@@ -26,9 +26,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Controlador del patrón MVC, con soporte para múltiples sucursales.
- *  - realizarCompra(): todo el flujo de armado + software + ticket
- *  - mostrarHistorial(): lectura del .txt de tickets de la sucursal
+ * Controlador del patrón MVC para el flujo de compra y registro de historial.
+ * Gestiona la interacción con el usuario mediante {@link View} y la lógica de dominio mediante {@link Model}.
+ * Soporta:
+ * <ul>
+ *   <li>Realizar una compra paso a paso o pre‑armada con selección de software adicional.</li>
+ *   <li>Verificación y adaptación de compatibilidad de componentes.</li>
+ *   <li>Generación y almacenamiento de tickets de compra por sucursal.</li>
+ * </ul>
  */
 public class Controller {
 
@@ -41,9 +46,12 @@ public class Controller {
     private final CompatibilidadManager compat = new CompatibilidadManager();
 
     /**
-     * @param m Modelo inyectado
-     * @param v Vista inyectada
-     * @param sucursal Sucursal de origen
+     * Construye un Controller con el modelo, la vista y la sucursal especificados.
+     * Asegura que exista el archivo de historial en disco.
+     *
+     * @param m         instancia de {@link Model} que contiene la lógica de negocio
+     * @param v         instancia de {@link View} para interacción con el usuario
+     * @param sucursal  sucursal de origen de la compra
      */
     public Controller(Model m, View v, Sucursal sucursal) {
         this.model     = m;
@@ -52,13 +60,19 @@ public class Controller {
         ensureFile();
     }
 
-    /** Flujo completo de nueva compra */
+    /**
+     * Ejecuta el flujo completo de una nueva compra:
+     * <ol>
+     *   <li>Seleccionar configuración personalizada o pre‑armada.</li>
+     *   <li>Opcionalmente agregar software mediante decoradores.</li>
+     *   <li>Generar el ticket final y guardarlo en el historial de la sucursal.</li>
+     * </ol>
+     */
     public void realizarCompra() {
         view.mostrarMensaje("Sucursal: " + sucursal);
         Computadora pc;
         ComponenteFactory f = model.getFactory();
 
-        // 1) Personalizada vs pre‑armada
         int modo = view.mostrarMenu();
         if (modo == 1) {
             pc = pasoAPaso(f);
@@ -66,7 +80,6 @@ public class Controller {
             pc = prearmada(f);
         }
 
-        // 2) Software adicional
         while (view.confirmarAgregarSoftware()) {
             int sw = view.seleccionarSoftware();
             try {
@@ -86,14 +99,15 @@ public class Controller {
             }
         }
 
-        // 3) Generar y guardar ticket
         model.setComputadoraActual(pc);
         Ticket t = model.generarTicket("");
         view.mostrarTicket(t);
         appendTicket(t);
     }
 
-    /** Muestra en consola todo el historial de tickets de la sucursal */
+    /**
+     * Muestra en consola el historial de tickets de la sucursal actual.
+     */
     public void mostrarHistorial() {
         Path dir  = Paths.get(DIR, sucursal.name());
         Path file = dir.resolve(FILE);
@@ -110,54 +124,49 @@ public class Controller {
         }
     }
 
-    // ——— Métodos auxiliares privados ———
-
+    /**
+     * Constructor de flujo personalizado, seleccionando cada componente paso a paso.
+     *
+     * @param f fábrica de componentes para construir la PC personalizada
+     * @return instancia de {@link Computadora} ensamblada
+     */
     private Computadora pasoAPaso(ComponenteFactory f) {
         ComputadoraPersonalizadaBuilder b = new ComputadoraPersonalizadaBuilder();
         Computadora pc = null;
-
-        // CPU
         List<CPU> cpus = new ArrayList<>(f.catalogoCPU());
         CPU cpu = cpus.get(view.seleccionarDeCatalogo("CPU", cpus) - 1);
         b.agregarCPU(cpu); pc = finalize(b);
-
-        // GPU
         List<GPU> gpus = new ArrayList<>(f.catalogoGPU());
         GPU gpu = gpus.get(view.seleccionarDeCatalogo("GPU", gpus) - 1);
         b.agregarGPU(gpu); pc = finalize(b);
-
-        // RAM
         List<RAM> rams = new ArrayList<>(f.catalogoRAM());
         int nRam = view.solicitarCantidad("módulos de RAM", 4);
         for (int i = 0; i < nRam; i++)
             b.agregarRAM(rams.get(view.seleccionarDeCatalogo("RAM", rams) - 1));
         pc = finalize(b);
-
-        // Discos
         List<Almacenamiento> ds = new ArrayList<>(f.catalogoStorage());
         int nD = view.solicitarCantidad("discos (HDD/SSD)", 4);
         for (int i = 0; i < nD; i++)
             b.agregarDisco(ds.get(view.seleccionarDeCatalogo("disco", ds) - 1));
         pc = finalize(b);
-
-        // PSU
         List<FuenteDePoder> psus = new ArrayList<>(f.catalogoPSU());
         b.agregarFuente(psus.get(view.seleccionarDeCatalogo("Fuente de Poder", psus) - 1));
         pc = finalize(b);
-
-        // Motherboard
         List<Motherboard> mbs = new ArrayList<>(f.catalogoMotherboard());
         b.agregarMotherboard(mbs.get(view.seleccionarDeCatalogo("Motherboard", mbs) - 1));
         pc = finalize(b);
-
-        // Gabinete
         List<Gabinete> gab = new ArrayList<>(f.catalogoGabinetes());
         b.agregarGabinete(gab.get(view.seleccionarDeCatalogo("Gabinete", gab) - 1));
         pc = finalize(b);
-
         return pc;
     }
 
+    /**
+     * Constructor de flujo pre‑armado, seleccionando un preset del catálogo.
+     *
+     * @param f fábrica de componentes para construir la PC pre‑armada
+     * @return instancia de {@link Computadora} ensamblada
+     */
     private Computadora prearmada(ComponenteFactory f) {
         List<String> modelos = List.of("Gamer","Basica","Estudio","Oficina","Render");
         List<Computadora> presets = new ArrayList<>();
@@ -170,6 +179,12 @@ public class Controller {
         return pc;
     }
 
+    /**
+     * Finaliza cada paso de ensamblaje personalizado y verifica compatibilidad.
+     *
+     * @param b builder personalizado que gestiona el ensamblaje
+     * @return computadora actualizada tras verificación
+     */
     private Computadora finalize(ComputadoraPersonalizadaBuilder b) {
         Computadora pc = b.obtenerComputadora();
         model.setComputadoraActual(pc);
@@ -177,6 +192,12 @@ public class Controller {
         return pc;
     }
 
+    /**
+     * Verifica conflictos de compatibilidad y aplica adaptaciones si el usuario lo autoriza.
+     *
+     * @param pc     computadora a verificar
+     * @param etapa  descripción de la etapa para mensajes de error
+     */
     private void checkCompat(Computadora pc, String etapa) {
         List<String> c = compat.verificar(pc);
         if (!c.isEmpty()) {
@@ -191,6 +212,9 @@ public class Controller {
         }
     }
 
+    /**
+     * Asegura la existencia del directorio y archivo de historial para la sucursal.
+     */
     private void ensureFile() {
         try {
             Path dir  = Paths.get(DIR, sucursal.name());
@@ -202,6 +226,11 @@ public class Controller {
         }
     }
 
+    /**
+     * Agrega la representación del ticket al archivo de historial.
+     *
+     * @param t ticket generado para guardar
+     */
     private void appendTicket(Ticket t) {
         try {
             Path path = Paths.get(DIR, sucursal.name(), FILE);

@@ -1,4 +1,3 @@
-/* src/factory/Gabinete.java */       
 package src.factory; 
 
 /**

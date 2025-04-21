@@ -1,4 +1,3 @@
-/* src/factory/CPUAMD.java */
 package src.factory;
 
 /**

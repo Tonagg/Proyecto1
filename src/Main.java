@@ -1,7 +1,6 @@
 package src;
 
 import java.util.Scanner;
-import src.Sucursal;
 import src.factory.AmdFactory;
 import src.factory.IntelNvidiaFactory;
 import src.factory.ComponenteFactory;
@@ -9,8 +8,22 @@ import src.mvc.Controller;
 import src.mvc.Model;
 import src.mvc.View;
 
+/**
+ * Punto de entrada de la aplicación MonosChinos MX.
+ * Gestiona la selección de sucursal, plataforma de componentes y el flujo principal de compras.
+ */
 public final class Main {
 
+    /**
+     * Método principal que inicia la ejecución de la consola.
+     * <ol>
+     *   <li>Selecciona sucursal de origen.</li>
+     *   <li>Muestra menú para nueva compra o consulta de historial.</li>
+     *   <li>Dependiendo de la plataforma, usa fábrica Intel+Nvidia o AMD.</li>
+     * </ol>
+     *
+     * @param args parámetros de línea de comandos (no utilizados)
+     */
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
@@ -66,6 +79,14 @@ public final class Main {
         sc.close();
     }
 
+    /**
+     * Lee un entero del usuario dentro de un rango dado, reintentando hasta que sea válido.
+     *
+     * @param sc  escáner para lectura de consola
+     * @param min valor mínimo permitido (inclusive)
+     * @param max valor máximo permitido (inclusive)
+     * @return número entero ingresado por el usuario dentro del rango
+     */
     private static int leerEntero(Scanner sc, int min, int max) {
         while (true) {
             try {

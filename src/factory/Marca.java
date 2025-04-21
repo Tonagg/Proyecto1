@@ -1,11 +1,43 @@
 package src.factory;
 
-/** Marcas usadas por los componentes; amplía cuando lo necesites. */
+/**
+ * Enumeración de marcas disponibles para componentes de hardware.
+ * Utilizada en las fábricas y adaptadores para identificar el fabricante de cada componente.
+ *
+ * Se puede ampliar con nuevas marcas según los requisitos del sistema.
+ */
 public enum Marca {
-    INTEL, AMD, NVIDIA,
-    ASUS, MSI,
-    ADATA, KINGSTON,
-    EVGA, CORSAIR, XPG,
-    NZXT, YEYIAN,
-    WD, SEAGATE
+    /** Intel Corporation */
+    INTEL,
+    /** Advanced Micro Devices */
+    AMD,
+    /** NVIDIA Corporation */
+    NVIDIA,
+    
+    /** ASUS */
+    ASUS,
+    /** MSI */
+    MSI,
+    
+    /** ADATA */
+    ADATA,
+    /** Kingston Technology */
+    KINGSTON,
+    
+    /** EVGA */
+    EVGA,
+    /** Corsair */
+    CORSAIR,
+    /** XPG */
+    XPG,
+    
+    /** NZXT */
+    NZXT,
+    /** Yeyian */
+    YEYIAN,
+    
+    /** Western Digital */
+    WD,
+    /** Seagate Technology */
+    SEAGATE
 }

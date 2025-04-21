@@ -1,4 +1,3 @@
-/* src/factory/CPUIntel.java */
 package src.factory;
 
 /**

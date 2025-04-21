@@ -1,106 +1,171 @@
-/* ────── src/mvc/Model.java ────── */
 package src.mvc;
 
 import java.util.List;
 import src.Computadora;
 import src.Ticket;
-import src.builder.*;
+import src.builder.ComputadoraPersonalizadaBuilder;
+import src.builder.ComputadoraPrearmadaBuilder;
+import src.builder.ComputadoraDirector;
 import src.compatibilidad.CompatibilidadManager;
 import src.factory.*;
 
 /**
- *   Modelo de dominio.
+ * Modelo de dominio que coordina la construcción de computadoras,
+ * la verificación de compatibilidad y la generación de tickets.
  *
- *   • Construye equipos personalizados o pre‑armados  
- *   • Verifica / adapta compatibilidad a través de {@link CompatibilidadManager}  
- *   • Genera el {@link Ticket} final
+ * <p>Responsabilidades principales:
+ * <ul>
+ *   <li>Construir equipos personalizados o pre‑armados.</li>
+ *   <li>Verificar y adaptar compatibilidad mediante {@link CompatibilidadManager}.</li>
+ *   <li>Generar instancias de {@link Ticket} con el ensamblaje actual.</li>
+ * </ul>
+ * </p>
  */
 public class Model {
 
-    /* ──────────── dependencias inyectadas ──────────── */
-    private final ComponenteFactory     factory;
+    /** Fábrica de componentes inyectada para crear hardware. */
+    private final ComponenteFactory factory;
+    /** Gestor de reglas de compatibilidad. */
     private final CompatibilidadManager compatManager = new CompatibilidadManager();
 
-    /* ──────────── estado interno ──────────── */
+    /** Computadora que actualmente se está ensamblando o ya fue ensamblada. */
     private Computadora computadoraActual;
 
+    /**
+     * Construye el modelo con la fábrica de componentes especificada.
+     *
+     * @param factory fábrica utilizada para generar componentes
+     */
     public Model(ComponenteFactory factory) {
         this.factory = factory;
     }
 
-    /* =================================================
-       =================  C A T Á L O G O S  =============
-       ================================================= */
-    public ComponenteFactory getFactory() { return factory; }
+    // =================================================
+    // ================ CATÁLOGOS ======================
+    // =================================================
 
-    /* =================================================
-       ===========  CONSTRUCCIÓN DE COMPUTADORAS =========
-       ================================================= */
+    /**
+     * Obtiene la fábrica de componentes bajo demanda.
+     *
+     * @return instancia de {@link ComponenteFactory}
+     */
+    public ComponenteFactory getFactory() {
+        return factory;
+    }
 
-    /** Builder ‘vacío’ para que el Controller añada piezas una a una. */
+    // =================================================
+    // =========== CONSTRUCCIÓN DE COMPUTADORAS ========
+    // =================================================
+
+    /**
+     * Crea un builder vacío para ensamblar una computadora paso a paso.
+     * Establece la computadoraActual al builder inicial.
+     *
+     * @return builder personalizado para construcción manual
+     */
     public ComputadoraPersonalizadaBuilder nuevoBuilderPersonalizado() {
         ComputadoraPersonalizadaBuilder b = new ComputadoraPersonalizadaBuilder();
         computadoraActual = b.obtenerComputadora();
         return b;
     }
 
-    /** Crea de golpe una configuración pre‑armada y la deja como “actual”. */
+    /**
+     * Construye de manera inmediata una computadora pre‑armada según el modelo.
+     * Establece la computadoraActual a la instancia resultante.
+     *
+     * @param modelo nombre del preset pre‑armado
+     * @return computadora pre‑armada construida
+     */
     public Computadora crearComputadoraPrearmada(String modelo) {
         ComputadoraPrearmadaBuilder b = new ComputadoraPrearmadaBuilder(factory, modelo);
         computadoraActual = b.obtenerComputadora();
         return computadoraActual;
     }
 
-    /* =================================================
-       ==============  COMPATIBILIDAD  ==================
-       ================================================= */
+    // =================================================
+    // =============== COMPATIBILIDAD ===================
+    // =================================================
 
-    /** PC que el Controller va montando paso a paso. */
-    public void setComputadoraActual(Computadora pc) { this.computadoraActual = pc; }
+    /**
+     * Establece la computadora que se está montando.
+     *
+     * @param pc instancia de {@link Computadora}
+     */
+    public void setComputadoraActual(Computadora pc) {
+        this.computadoraActual = pc;
+    }
 
-    public Computadora getComputadoraActual()        { return computadoraActual; }
+    /**
+     * Obtiene la computadora en construcción o construida.
+     *
+     * @return instancia de {@link Computadora}
+     */
+    public Computadora getComputadoraActual() {
+        return computadoraActual;
+    }
 
-    /** @return <code>true</code> si no hay conflictos pendientes. */
+    /**
+     * Verifica si la computadora actual no tiene conflictos de compatibilidad.
+     *
+     * @return {@code true} si es compatible; {@code false} si hay conflictos
+     */
     public boolean esCompatible() {
         return compatManager.verificar(computadoraActual).isEmpty();
     }
 
-    /** Lista legible de conflictos encontrados. */
+    /**
+     * Verifica y devuelve mensajes de cualquier conflicto de compatibilidad.
+     *
+     * @return lista de descripciones de conflictos
+     */
     public List<String> verificarCompatibilidad() {
         return compatManager.verificar(computadoraActual);
     }
 
     /**
-     * Aplica todos los adaptadores posibles
-     * y devuelve un texto con las acciones tomadas.
+     * Aplica todos los adaptadores posibles para resolver conflictos detectados.
+     *
+     * @return cadena con notas de adaptaciones aplicadas
      */
     public String adaptar() {
         return compatManager.adaptar(computadoraActual);
     }
 
-    /* =================================================
-       ===============  T I C K E T  ====================
-       ================================================= */
+    // =================================================
+    // =============== TICKET ===========================
+    // =================================================
+
+    /**
+     * Genera un ticket final con la configuración actual y notas opcionales.
+     *
+     * @param notasExtras texto adicional para el ticket
+     * @return instancia de {@link Ticket}
+     */
     public Ticket generarTicket(String notasExtras) {
         return new Ticket(computadoraActual, notasExtras);
     }
 
-    /* =================================================
-       ===========  MÉTODOS DE PRUEBA / UTIL  ============
-       ================================================= */
+    // =================================================
+    // == MÉTODOS DE PRUEBA / DEMO =====================
+    // =================================================
 
-    /** Construye una PC de ejemplo totalmente funcional (útil para tests). */
+    /**
+     * Construye una computadora de ejemplo mínima completamente funcional.
+     * Útil para pruebas unitarias o demostraciones.
+     *
+     * @return computadora de ejemplo ensamblada
+     */
     public Computadora demoPersonalizadaMinima() {
         ComputadoraPersonalizadaBuilder b = new ComputadoraPersonalizadaBuilder();
         ComputadoraDirector d = new ComputadoraDirector(b);
 
-        CPU  cpu  = factory.catalogoCPU().iterator().next();
-        GPU  gpu  = factory.catalogoGPU().iterator().next();
-        RAM  ram  = factory.catalogoRAM().iterator().next();
+        CPU cpu = factory.catalogoCPU().iterator().next();
+        GPU gpu = factory.catalogoGPU().iterator().next();
+        RAM ram = factory.catalogoRAM().iterator().next();
         Motherboard mb = factory.catalogoMotherboard().iterator().next();
         FuenteDePoder psu = factory.catalogoPSU().iterator().next();
         Almacenamiento ssd = factory.catalogoStorage().iterator().next();
-        Gabinete case_ = factory.catalogoGabinetes().iterator().next();
+        Gabinete gabinete = factory.catalogoGabinetes().iterator().next();
 
         d.construirComputadora(
             cpu,
@@ -109,7 +174,7 @@ public class Model {
             List.of(ssd),
             psu,
             mb,
-            case_
+            gabinete
         );
 
         computadoraActual = d.obtenerComputadora();

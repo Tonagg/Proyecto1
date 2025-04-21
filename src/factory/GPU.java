@@ -1,4 +1,3 @@
-/* src/factory/GPU.java */            
 package src.factory; 
 
 /**

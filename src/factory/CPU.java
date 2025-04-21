@@ -1,4 +1,3 @@
-/* src/factory/CPU.java */            
 package src.factory; 
 
 /**

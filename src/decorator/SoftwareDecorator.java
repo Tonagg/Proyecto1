@@ -1,8 +1,7 @@
-/* src/decorator/SoftwareDecorator.java */
 package src.decorator;
 
 import java.util.Objects;
-import java.util.List;  
+import java.util.List;
 import src.Computadora;
 import src.factory.CPU;
 import src.factory.GPU;
@@ -11,46 +10,79 @@ import src.factory.Motherboard;
 import src.factory.Gabinete;
 import src.factory.RAM;
 import src.factory.Almacenamiento;
+
 /**
- * Decorador genérico de “software”.
- * Delega *todos* los métodos de {@link Computadora} y
- * añade {@code descripcionExtra} + {@code costoExtra}.
+ * Decorador genérico para añadir software a una instancia de {@link Computadora}.
+ * Implementa el patrón Decorator, delegando todas las operaciones de hardware
+ * a la instancia base y añadiendo una descripción y costo extra por el software.
  */
 public abstract class SoftwareDecorator extends Computadora {
 
+    /** Computadora original que se está decorando. */
     protected final Computadora base;
+
+    /** Descripción del software adicional. */
     private final String descripcionExtra;
+
+    /** Costo extra asociado al software. */
     private final double costoExtra;
 
+    /**
+     * Construye un nuevo decorador de software sobre la computadora dada.
+     *
+     * @param base              computadora original a decorar
+     * @param descripcionExtra  descripción del software agregado para la presentación
+     * @param costoExtra        costo adicional que representa el software
+     * @throws NullPointerException     si la computadora base es nula
+     * @throws IllegalStateException    si el software ya había sido agregado previamente
+     */
     protected SoftwareDecorator(Computadora base,
                                 String descripcionExtra,
                                 double costoExtra) {
 
-        Objects.requireNonNull(base);
-        this.base             = base;
+        Objects.requireNonNull(base, "La computadora base no puede ser nula");
+        this.base = base;
         this.descripcionExtra = descripcionExtra;
-        this.costoExtra       = costoExtra;
+        this.costoExtra = costoExtra;
 
-        /* — evita duplicados — */
-        if (base.getDescripcion().contains(descripcionExtra))
-        throw new IllegalStateException(
-            "Ya se había añadido %s".formatted(descripcionExtra));
-    
+        // Evita duplicar la instalación del mismo software
+        if (base.getDescripcion().contains(descripcionExtra)) {
+            throw new IllegalStateException(
+                String.format("Ya se había añadido %s", descripcionExtra)
+            );
+        }
     }
 
-    /* ──────── delegaciones automáticas ──────── */
+    /**
+     * Calcula el precio total incluyendo el costo adicional del software.
+     *
+     * @return precio total combinado de hardware y software
+     */
+    @Override
+    public double calcularPrecioTotal() {
+        return base.calcularPrecioTotal() + costoExtra;
+    }
 
-    @Override public double calcularPrecioTotal()      { return base.calcularPrecioTotal() + costoExtra; }
-    @Override public String  getDescripcion()          { return base.getDescripcion() + " + " + descripcionExtra; }
+    /**
+     * Obtiene la descripción completa de la computadora, incluyendo el software agregado.
+     *
+     * @return descripción extendida con el nombre del software
+     */
+    @Override
+    public String getDescripcion() {
+        return base.getDescripcion() + " + " + descripcionExtra;
+    }
 
-    /* getters de hardware */
-    @Override public CPU            getCpu()           { return base.getCpu(); }
-    @Override public GPU            getGpu()           { return base.getGpu(); }
-    @Override public FuenteDePoder  getFuente()        { return base.getFuente(); }
-    @Override public Motherboard    getMotherboard()   { return base.getMotherboard(); }
-    @Override public Gabinete       getGabinete()      { return base.getGabinete(); }
-    @Override public List<RAM>      getRamModules()    { return base.getRamModules(); }
-    @Override public List<Almacenamiento> getDiscos()  { return base.getDiscos(); }
+    // Métodos que delegan la consulta de hardware a la computadora base
 
-    /* setters siguen prohibidos (instalación de software no cambia HW) */
+    @Override public CPU getCpu() { return base.getCpu(); }
+    @Override public GPU getGpu() { return base.getGpu(); }
+    @Override public FuenteDePoder getFuente() { return base.getFuente(); }
+    @Override public Motherboard getMotherboard() { return base.getMotherboard(); }
+    @Override public Gabinete getGabinete() { return base.getGabinete(); }
+    @Override public List<RAM> getRamModules() { return base.getRamModules(); }
+    @Override public List<Almacenamiento> getDiscos() { return base.getDiscos(); }
+
+    // Nota: No se permiten setters en el decorador de software, ya que
+    // la instalación de software no modifica el hardware.
 }
