@@ -10,9 +10,20 @@ public final class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
+        // — Selección de sucursal —
+        System.out.println("Seleccione sucursal de origen:");
+        System.out.println(" 1) CDMX (central)");
+        System.out.println(" 2) Chihuahua");
+        System.out.println(" 3) Jalisco");
+        System.out.println(" 4) Yucatán");
+        System.out.print("Opción (1–4): ");
+        int sucOp = leerEntero(sc, 1, 4);
+        Sucursal sucursal = Sucursal.values()[sucOp - 1];
+        System.out.println("Sucursal seleccionada: " + sucursal + "\n");
+
         while (true) {
             // ─── Menú principal ───
-            System.out.println("=== MONOSCHINOS MX ===");
+            System.out.println("=== MONOSCHINOS MX (" + sucursal + ") ===");
             System.out.println("1) Nueva compra");
             System.out.println("2) Consultar historial de tickets");
             System.out.println("0) Salir");
